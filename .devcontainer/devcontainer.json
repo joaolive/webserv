@@ -1,0 +1,28 @@
+{
+	"name": "C/CPP Dev Environment",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cpp-devtools",
+				"twxs.cmake",
+				"ms-vscode.cmake-tools",
+				"vadimcn.vscode-lldb",
+				"ms-vscode.makefile-tools"
+			],
+			"settings": {
+				"chat.disableAIFeatures": true
+			}
+		}
+	},
+	"remoteUser": "vscode",
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:1": {
+			"upgradePackages": false,
+			"configureZshAsDefaultShell": true
+		}
+	}
+}
