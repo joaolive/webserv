@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 15:23:43 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/27 17:37:39 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/04/27 22:42:22 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void Lexer::initTable() {
 	}
 	_dispatchTable[static_cast<unsigned char>('\n')] = &Lexer::handleNewline;
 	_dispatchTable[static_cast<unsigned char>('"')]  = &Lexer::handleQuote;
+	_dispatchTable[static_cast<unsigned char>('\'')]  = &Lexer::handleQuote;
 	_dispatchTable[static_cast<unsigned char>('#')]  = &Lexer::handleComment;
 
 	_dispatchTable[static_cast<unsigned char>('{')]  = &Lexer::handleSpecial;
@@ -43,7 +44,18 @@ void Lexer::throwSyntaxError(const std::string& detail) {
 }
 
 void Lexer::handleWord(const std::string& content, size_t& i) {
-	_currentToken += content[i++];
+	while ( i < content.size()) {
+		unsigned char c = static_cast<unsigned char>(content[i]);
+
+		if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f')
+			break ;
+		if (_dispatchTable[c] != &Lexer::handleWord)
+			break ;
+		if (content[i] == '\\' && i + 1 < content.size())
+			i++;
+		if (i < content.size())
+			_currentToken += content[i++];
+	}
 }
 
 void Lexer::handleNewline(const std::string&, size_t& i) {
@@ -65,15 +77,18 @@ void Lexer::handleComment(const std::string& content, size_t& i) {
 }
 
 void Lexer::handleQuote(const std::string& content, size_t& i) {
-	handleWord(content, i);
-	while (i < content.size() && content[i] != '"') {
+	char quote = content[i++];
+	while (i < content.size() && content[i] != quote) {
 		if (content[i] == '\n')
 			_line++;
-		handleWord(content, i);
+		if (content[i] == '\\' && i + 1 < content.size())
+			i++;
+		if (i < content.size())
+			_currentToken += content[i++];
 	}
-	if (i >= content.size() || content[i] != '"')
+	if (i >= content.size() || content[i] != quote)
 		throwSyntaxError("unclosed string quote");
-	handleWord(content, i);
+	i++;
 	flushToken();
 }
 
