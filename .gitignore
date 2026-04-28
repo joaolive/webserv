@@ -1,0 +1,12 @@
+
+# Directories
+.brainStorage/
+.vscode/
+
+# Files
+*.pdf
+*.o
+*.a
+*.out
+*.log
+*.csv
