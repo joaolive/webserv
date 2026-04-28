@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 09:38:31 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 18:27:31 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/28 11:37:41 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int Reactor::start(void) {
 	AcceptHandler* handler = NULL;
 
 	try {
+		std::cout << "WebServer running: " << "http://localhost:" << _config->port() << std::endl;
 		handler = new AcceptHandler(this, _http);
 		addHandler(servFd(), handler);
 		startEventLoop();
