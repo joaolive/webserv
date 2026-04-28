@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:37:55 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 18:18:05 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/28 10:53:45 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "ClientHandler.hpp"
 #include "Reactor.hpp"
 
+#include <errno.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
 
@@ -29,6 +30,8 @@ enum ClientHandlerState {
 	WRITING,
 	CLOSED
 };
+
+class Reactor;
 
 class ClientHandler : public IEventHandler {
 private:

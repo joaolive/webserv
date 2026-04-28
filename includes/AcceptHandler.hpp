@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 18:12:36 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 18:18:22 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/28 10:54:26 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include "Reactor.hpp"
 
 #include <sys/epoll.h>
+
+class Reactor;
 
 class AcceptHandler : public IEventHandler {
 private:
