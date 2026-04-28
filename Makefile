@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: mhidani <mhidani@student.42sp.org.br>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2025/11/28 20:52:17 by joaolive         ###   ########.fr        #
+#    Updated: 2026/04/28 18:02:01 by mhidani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,9 +48,12 @@ DEPFLAGS = -MMD -MP
 CPPFLAGS = -Iinclude
 
 SRC_NAMES = $(addsuffix .cpp, main)
+SRC_INFRA = $(addsuffix .cpp, AcceptHandler ClientHandler Reactor)
 
 # Source files
-SRC = $(addprefix $(SRC_DIR)/, $(SRC_NAMES))
+SRC = \
+	$(addprefix $(SRC_DIR)/, $(SRC_NAMES)) \
+	$(addprefix $(SRC_DIR)/infra/, $(SRC_INFRA))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
@@ -76,6 +79,7 @@ $(BIN_DIR)/$(NAME): $(SRC_OBJS) | $(BIN_DIR)
 
 # Compile with progress bar
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	@$(eval COUNT=$(shell echo $$(($(COUNT)+1))))
 	@PERCENT=$$(($(COUNT)*100/$(TOTAL))); \
 	FILLED=$$(( $(BAR_WIDTH) * $(COUNT) / $(TOTAL) )); \
