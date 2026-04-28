@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 16:18:53 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 16:20:28 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/28 10:40:51 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,6 @@
 
 class IHttpServer {
 public:
-	virtual	~IHttpServer(void) {};
+	virtual				~IHttpServer(void) {};
 	virtual std::string	process(const std::string& raw) = 0;
 };
