@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 15:32:18 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 18:20:58 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/28 11:21:50 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,26 @@ int ClientHandler::read(void) {
 	char	buffer[READ_BUFFER_SIZE];
 	ssize_t	rbytes = 0;
 
-	while ((rbytes = recv(_fd, buffer, READ_BUFFER_SIZE, 0)) > 0)
-		_readBuffer.append(buffer, rbytes);
-	if (rbytes < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-		closeConnection();
-		return -1; // TODO: check to return message and code
+	while (true) {
+		rbytes = recv(_fd, buffer, READ_BUFFER_SIZE, 0);
+		if (rbytes > 0) {
+			_readBuffer.append(buffer, rbytes);
+		} else if (rbytes == 0) { // TODO: client close connection
+			closeConnection();
+			return -1;
+		} else {
+			if (errno == EAGAIN || errno == EWOULDBLOCK) // TODO: finish to read
+				break;
+			closeConnection();
+			return -1;
+		}
 	}
 
 	if (_readBuffer.find("\r\n\r\n") != std::string::npos) {
 		_eventLoop->changeHandlerToWrite(_fd);
 		_state = WRITING;
 		_writeBuffer = _http->process(_readBuffer);
+		_readBuffer.clear();
 	}
 	return 0;
 }
