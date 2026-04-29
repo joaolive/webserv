@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 09:38:31 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/28 11:37:41 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/04/29 09:43:00 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ int Reactor::createSocket(void) const {
 	if (listen(fd, SOMAXCONN) < 0)
 		throw std::runtime_error("listen"); // TODO: create exception
 
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	if (fcntl(fd, F_SETFL, O_NONBLOCK))
+		throw std::runtime_error("fcntl O_NONBLOCK");
 	return fd;
 }
 
