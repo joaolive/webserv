@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:04:19 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:45:18 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/04/30 20:52:56 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,10 @@ void LocationConfig::setRoot(const std::string& root) {
 
 void LocationConfig::setAutoindex(bool autoindex) {
 	_autoindex = autoindex;
+}
+
+void LocationConfig::setClientMaxBodySize(uint64_t clientMaxBodySize) {
+	_client_max_body_size = clientMaxBodySize;
 }
 
 void LocationConfig::setReturn(uint16_t code, const std::string& url) {

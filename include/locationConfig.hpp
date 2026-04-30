@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:57:52 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:45:54 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/04/30 20:51:15 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class LocationConfig {
 		void setAlias(const std::string& alias);
 		void setRoot(const std::string& root);
 		void setAutoindex(bool autoindex);
+		void setClientMaxBodySize(uint64_t clientMaxBodySize);
 		void setReturn(uint16_t code, const std::string& url);
 
 		void addIndex(const std::string& index);
