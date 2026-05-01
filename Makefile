@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2025/11/28 20:52:17 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/01 01:36:58 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,6 +76,7 @@ $(BIN_DIR)/$(NAME): $(SRC_OBJS) | $(BIN_DIR)
 
 # Compile with progress bar
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	@$(eval COUNT=$(shell echo $$(($(COUNT)+1))))
 	@PERCENT=$$(($(COUNT)*100/$(TOTAL))); \
 	FILLED=$$(( $(BAR_WIDTH) * $(COUNT) / $(TOTAL) )); \
