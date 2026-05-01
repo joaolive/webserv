@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 00:28:50 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:49:00 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:57:46 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,11 @@ int ParseUtils::validateArgsCount(const std::string& directive, const std::vecto
 	const size_t NO_LIMIT = static_cast<size_t>(-1);
 	bool is_exact = (min_expected == max_expected);
 	bool is_at_least = (max_expected == NO_LIMIT);
+	std::stringstream ss;
+	ss << " and " << max_expected << " arguments.\n";
 	std::string suffix = (is_exact || is_at_least) 
 						 ? " argument(s).\n" 
-						 : " and " + std::to_string(max_expected) + " arguments.\n";
+						 : ss.str();
 	std::cerr << "Parse error: '" << directive << "' requires "
 			  << (is_exact ? "exactly " : is_at_least ? "at least " : "between ")
 			  << min_expected 

@@ -6,14 +6,14 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:57:52 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 01:05:04 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:50:06 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <string>
-#include <cstdint>
+#include <stdint.h>
 #include <map>
 #include <vector>
 

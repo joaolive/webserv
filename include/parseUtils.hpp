@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 00:26:53 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:30:53 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:50:06 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <cstdint>
+#include <stdint.h>
 
 class ParseUtils {
 	public:
