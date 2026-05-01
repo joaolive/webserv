@@ -6,11 +6,12 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:04:19 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 20:52:56 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:05:50 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "locationConfig.hpp"
+#include "serverConfig.hpp"
 
 LocationConfig::LocationConfig() 
 	: _path(""), 
@@ -139,6 +140,19 @@ void LocationConfig::addErrorPage(uint16_t key, const std::string& value) {
 }
 
 // helpers
+
+void LocationConfig::inherit(const ServerConfig& server) {
+	if (_root.empty()) {
+		_root = server.getRoot();
+	}
+	if (_index.empty()) {
+		_index = server.getIndex();
+	}
+	if (_client_max_body_size == 0) {
+		_client_max_body_size = server.getClientMaxBodySize();
+	}
+	_error_pages.insert(server.getErrorPages().begin(), server.getErrorPages().end());
+}
 
 bool LocationConfig::isMethodAllowed(uint8_t method) const {
 	return ((_allow_methods & method) != 0);

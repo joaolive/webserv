@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:05:38 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:29:02 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:01:02 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string>
 #include <map>
 #include <arpa/inet.h>
-#include <locationConfig.hpp>
+#include "locationConfig.hpp"
 
 class ServerConfig {
 	private:
@@ -43,6 +43,7 @@ class ServerConfig {
 		const std::vector<std::string>& getServerNames() const;
 		const std::map<uint16_t, std::string>& getErrorPages() const;
 		const std::vector<LocationConfig>& getLocations() const;
+		std::vector<LocationConfig>& getLocations();
 		
 		void setPort(uint16_t port);
 		void setHost(in_addr_t host);

@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:17:13 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:29:40 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 00:56:41 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,10 @@ const std::map<uint16_t, std::string>& ServerConfig::getErrorPages() const {
 }
 
 const std::vector<LocationConfig>& ServerConfig::getLocations() const {
+	return (_locations);
+}
+
+std::vector<LocationConfig>& ServerConfig::getLocations() {
 	return (_locations);
 }
 

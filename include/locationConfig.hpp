@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:57:52 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 20:51:15 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 01:05:04 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ enum HttpMethod {
 	METHOD_DELETE	= 1 << 3,
 	METHOD_PATCH	= 1 << 4
 };
+
+class ServerConfig;
 
 class LocationConfig {
 	private:
@@ -70,5 +72,6 @@ class LocationConfig {
 		void addMethod(uint8_t method);
 		void addErrorPage(uint16_t key, const std::string& value);
 
+		void inherit(const ServerConfig& server);
 		bool isMethodAllowed(uint8_t method) const;
 };
