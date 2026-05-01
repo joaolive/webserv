@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/01 01:36:58 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/01 02:36:17 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,9 +48,12 @@ DEPFLAGS = -MMD -MP
 CPPFLAGS = -Iinclude
 
 SRC_NAMES = $(addsuffix .cpp, main)
+SRC_CONFIG = $(addsuffix .cpp, config lexer locationConfig parseLocation parser parseServer parseUtils readFile serverConfig)
 
 # Source files
-SRC = $(addprefix $(SRC_DIR)/, $(SRC_NAMES))
+SRC = \
+	$(addprefix $(SRC_DIR)/, $(SRC_NAMES)) \
+	$(addprefix $(SRC_DIR)/config/, $(SRC_CONFIG))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
