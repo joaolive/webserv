@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mhidani <mhidani@student.42sp.org.br>      +#+  +:+       +#+         #
+#    By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/04/28 18:02:01 by mhidani          ###   ########.fr        #
+#    Updated: 2026/05/01 00:07:20 by mhidani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,11 +48,13 @@ DEPFLAGS = -MMD -MP
 CPPFLAGS = -Iinclude
 
 SRC_NAMES = $(addsuffix .cpp, main)
+SRC_CONFIG = $(addsuffix .cpp, config lexer locationConfig parseLocation parser parseServer parseUtils readFile serverConfig)
 SRC_INFRA = $(addsuffix .cpp, AcceptHandler ClientHandler Reactor)
 
 # Source files
 SRC = \
 	$(addprefix $(SRC_DIR)/, $(SRC_NAMES)) \
+	$(addprefix $(SRC_DIR)/config/, $(SRC_CONFIG))
 	$(addprefix $(SRC_DIR)/infra/, $(SRC_INFRA))
 
 # Object files

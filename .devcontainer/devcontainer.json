@@ -11,10 +11,13 @@
 				"twxs.cmake",
 				"ms-vscode.cmake-tools",
 				"vadimcn.vscode-lldb",
-				"ms-vscode.makefile-tools"
+				"ms-vscode.makefile-tools",
+				"kube.42header"
 			],
 			"settings": {
-				"chat.disableAIFeatures": true
+				"chat.disableAIFeatures": true,
+				"42header.username": "${localEnv:USER_42}",
+				"42header.email": "${localEnv:MAIL_42}"
 			}
 		}
 	},
