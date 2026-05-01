@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/01 02:36:17 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/01 16:01:08 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,19 +41,26 @@ RM = rm -rf
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj
+INC_DIR = include
 
 #Flags and Includes
 CCFLAGS = -Wall -Wextra -Werror -std=c++98
 DEPFLAGS = -MMD -MP
-CPPFLAGS = -Iinclude
+CPPFLAGS = -I$(INC_DIR)
 
-SRC_NAMES = $(addsuffix .cpp, main)
-SRC_CONFIG = $(addsuffix .cpp, config lexer locationConfig parseLocation parser parseServer parseUtils readFile serverConfig)
+SRC_MAIN = $(addsuffix .cpp, main)
+SRC_IO =  $(addsuffix .cpp, ReadFile)
+SRC_LEXER =  $(addsuffix .cpp, Lexer)
+SRC_MODEL =  $(addsuffix .cpp, Config LocationConfig ServerConfig)
+SRC_PARSER = $(addsuffix .cpp, LocationParser Parser ParseUtils ServerParser)
 
 # Source files
 SRC = \
-	$(addprefix $(SRC_DIR)/, $(SRC_NAMES)) \
-	$(addprefix $(SRC_DIR)/config/, $(SRC_CONFIG))
+	$(addprefix $(SRC_DIR)/, $(SRC_MAIN)) \
+	$(addprefix $(SRC_DIR)/config/io/, $(SRC_IO)) \
+	$(addprefix $(SRC_DIR)/config/lexer/, $(SRC_LEXER)) \
+	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
+	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))

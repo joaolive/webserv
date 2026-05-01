@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseServer.hpp                                    :+:      :+:    :+:   */
+/*   ServerParser.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/29 03:48:38 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:33:52 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:34:07 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <map>
 #include <iostream>
 #include <sstream>
-#include "parseUtils.hpp"
-#include "serverConfig.hpp"
+#include "config/parser/ParseUtils.hpp"
+#include "config/model/ServerConfig.hpp"
 
-class ParseServer {
+class ServerParser {
 	private:
 		typedef int (*DirectiveHandler)(const std::vector<std::string>&, ServerConfig&);
 		static std::map<std::string, DirectiveHandler> initDispatchTable();

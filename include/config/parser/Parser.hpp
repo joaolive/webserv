@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.hpp                                         :+:      :+:    :+:   */
+/*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:21:59 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:43:32 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:34:56 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "lexer.hpp"
-#include "config.hpp"
-#include "parseServer.hpp"
-#include "parseLocation.hpp"
+#include "config/lexer/Lexer.hpp"
+#include "config/model/Config.hpp"
+#include "config/parser/ServerParser.hpp"
+#include "config/parser/LocationParser.hpp"
 
 class Parser {
 	private:

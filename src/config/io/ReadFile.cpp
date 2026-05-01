@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readFile.cpp                                       :+:      :+:    :+:   */
+/*   ReadFile.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 09:07:55 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/27 14:51:31 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:23:56 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "readFile.hpp"
+#include "config/io/ReadFile.hpp"
 
 void ReadFile::checkPath(const std::string& filename) {
 	struct stat st;

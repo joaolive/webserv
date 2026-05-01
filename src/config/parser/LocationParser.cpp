@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseLocation.cpp                                  :+:      :+:    :+:   */
+/*   LocationParser.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/29 19:30:28 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:34:53 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:37:26 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parseLocation.hpp"
+#include "config/parser/LocationParser.hpp"
 
-int ParseLocation::parseDirective(const std::string& directive, const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseDirective(const std::string& directive, const std::vector<std::string>& args, LocationConfig& config) {
 	static const std::map<std::string, DirectiveHandler> dispatchTable = initDispatchTable();
 	std::map<std::string, DirectiveHandler>::const_iterator it = dispatchTable.find(directive);
 	if (it != dispatchTable.end()) {
@@ -23,38 +23,38 @@ int ParseLocation::parseDirective(const std::string& directive, const std::vecto
 	return (1);
 }
 
-std::map<std::string, ParseLocation::DirectiveHandler> ParseLocation::initDispatchTable() {
+std::map<std::string, LocationParser::DirectiveHandler> LocationParser::initDispatchTable() {
 	std::map<std::string, DirectiveHandler> table;
 	
-	table["alias"] = &ParseLocation::parseAlias;
-	table["root"] = &ParseLocation::parseRoot;
-	table["autoindex"] = &ParseLocation::parseAutoindex;
-	table["allow_methods"] = &ParseLocation::parseAllowMethods;
-	table["client_max_body_size"] = &ParseLocation::parseClientMaxBodySize;
-	table["index"] = &ParseLocation::parseIndex;
-	table["cgi_path"] = &ParseLocation::parseCgiPath;
-	table["cgi_ext"] = &ParseLocation::parseCgiExt;
-	table["return"] = &ParseLocation::parseReturn;
-	table["error_page"] = &ParseLocation::parseErrorPage;
+	table["alias"] = &LocationParser::parseAlias;
+	table["root"] = &LocationParser::parseRoot;
+	table["autoindex"] = &LocationParser::parseAutoindex;
+	table["allow_methods"] = &LocationParser::parseAllowMethods;
+	table["client_max_body_size"] = &LocationParser::parseClientMaxBodySize;
+	table["index"] = &LocationParser::parseIndex;
+	table["cgi_path"] = &LocationParser::parseCgiPath;
+	table["cgi_ext"] = &LocationParser::parseCgiExt;
+	table["return"] = &LocationParser::parseReturn;
+	table["error_page"] = &LocationParser::parseErrorPage;
 
 	return (table);
 }
 
-int ParseLocation::parseAlias(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseAlias(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("alias", args, 1, 1))
 		return (1);
 	config.setAlias(args[0]);
 	return (0);
 }
 
-int ParseLocation::parseRoot(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseRoot(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("root", args, 1, 1))
 		return (1);
 	config.setRoot(args[0]);
 	return (0);
 }
 
-int ParseLocation::parseAutoindex(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseAutoindex(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("autoindex", args, 1, 1))
 		return (1);
 	if (args[0] != "on" && args[0] != "off") {
@@ -65,7 +65,7 @@ int ParseLocation::parseAutoindex(const std::vector<std::string>& args, Location
 	return (0);
 }
 
-int ParseLocation::parseAllowMethods(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseAllowMethods(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("allow_methods", args, 1))
 		return (1);
 	static std::map<std::string, uint8_t> validMethods;
@@ -87,7 +87,7 @@ int ParseLocation::parseAllowMethods(const std::vector<std::string>& args, Locat
 	return (0);
 }
 
-int ParseLocation::parseClientMaxBodySize(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseClientMaxBodySize(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("client_max_body_size", args, 1, 1))
 		return (1);
 	uint64_t base_size = 0;
@@ -107,7 +107,7 @@ int ParseLocation::parseClientMaxBodySize(const std::vector<std::string>& args, 
 	return (0);
 }
 
-int ParseLocation::parseIndex(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseIndex(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("index", args, 1))
 		return (1);
 	for (size_t i = 0; i < args.size(); i++)
@@ -115,7 +115,7 @@ int ParseLocation::parseIndex(const std::vector<std::string>& args, LocationConf
 	return (0);
 }
 
-int ParseLocation::parseCgiPath(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseCgiPath(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("cgi_path", args, 1))
 		return (1);
 	for (size_t i = 0; i < args.size(); i++)
@@ -123,7 +123,7 @@ int ParseLocation::parseCgiPath(const std::vector<std::string>& args, LocationCo
 	return (0);
 }
 
-int ParseLocation::parseCgiExt(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseCgiExt(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("cgi_ext", args, 1))
 		return (1);
 	for (size_t i = 0; i < args.size(); i++) {
@@ -136,7 +136,7 @@ int ParseLocation::parseCgiExt(const std::vector<std::string>& args, LocationCon
 	return (0);
 }
 
-int ParseLocation::parseReturn(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseReturn(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("return", args, 1, 2))
 		return (1);
 	uint16_t code = 302;
@@ -160,7 +160,7 @@ int ParseLocation::parseReturn(const std::vector<std::string>& args, LocationCon
 	return (0);
 }
 
-int ParseLocation::parseErrorPage(const std::vector<std::string>& args, LocationConfig& config) {
+int LocationParser::parseErrorPage(const std::vector<std::string>& args, LocationConfig& config) {
 	if (ParseUtils::validateArgsCount("error_page", args, 2, 2))
 		return (1);
 	const std::string uri = args.back();

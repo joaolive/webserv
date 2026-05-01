@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serverConfig.hpp                                   :+:      :+:    :+:   */
+/*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:05:38 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 01:01:02 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:27:28 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string>
 #include <map>
 #include <arpa/inet.h>
-#include "locationConfig.hpp"
+#include "config/model/LocationConfig.hpp"
 
 class ServerConfig {
 	private:

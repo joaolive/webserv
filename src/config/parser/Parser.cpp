@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.cpp                                         :+:      :+:    :+:   */
+/*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:44:13 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 01:00:35 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:38:19 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.hpp"
+#include "config/parser/Parser.hpp"
 
 int Parser::parse(Config& config, const std::vector<Token>& tokens) {
 	size_t	i = 0;
@@ -67,7 +67,7 @@ int Parser::parseServerDirective(ServerConfig& server, const std::string& direct
 		return (1);
 	}
 	i++;
-	return (ParseServer::parseDirective(directive, args, server));
+	return (ServerParser::parseDirective(directive, args, server));
 }
 
 int Parser::parseLocation(ServerConfig& server, const std::vector<Token>& tokens, size_t& i) {
@@ -110,5 +110,5 @@ int Parser::parseLocationDirective(LocationConfig& location, const std::string& 
 		return (1);
 	}
 	i++;
-	return (ParseLocation::parseDirective(directive, args, location));
+	return (LocationParser::parseDirective(directive, args, location));
 }

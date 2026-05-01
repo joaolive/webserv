@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseUtils.cpp                                     :+:      :+:    :+:   */
+/*   ParseUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 00:28:50 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 01:57:46 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:25:17 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parseUtils.hpp"
+#include "config/parser/ParseUtils.hpp"
 
 int ParseUtils::extractSizeAndSuffix(const std::string& arg, uint64_t& size, char& suffix) {
 	std::string str_suffix;

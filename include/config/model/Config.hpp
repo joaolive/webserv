@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:20:04 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:34:58 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:26:39 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <vector>
-#include "serverConfig.hpp"
+#include "config/model/ServerConfig.hpp"
 
 class Config {
 	private:
