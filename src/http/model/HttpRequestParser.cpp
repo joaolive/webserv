@@ -6,12 +6,12 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:41:50 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/02 21:17:17 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/02 21:26:47 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "http/model/HttpRequestParser.hpp"
-#include "shared/model/Utils.hpp"
+#include "shared/Utils.hpp"
 
 HttpRequestParser::HttpRequestParser() 
 	: _state(STATE_REQUEST_LINE), _error_code(0), _content_length(0), _chunk_size(0), _bytes_to_read(0) {

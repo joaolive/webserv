@@ -6,11 +6,11 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:44:31 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/02 20:46:57 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/02 21:26:37 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shared/model/Utils.hpp"
+#include "shared/Utils.hpp"
 
 std::string Utils::toLowerCase(const std::string& str) {
 	std::string result = str;
