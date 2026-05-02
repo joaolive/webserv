@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/02 21:28:47 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/02 22:19:26 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,6 +55,7 @@ SRC_MODEL =  $(addsuffix .cpp, Config LocationConfig ServerConfig)
 SRC_PARSER = $(addsuffix .cpp, LocationParser Parser ParseUtils ServerParser)
 SRC_HTTP = $(addsuffix .cpp, HttpProcessorFactoryImpl HttpRequestParser)
 SRC_SHARED = $(addsuffix .cpp, Utils)
+SRC_ROUTER = $(addsuffix .cpp, HttpRouter)
 
 # Source files
 SRC = \
@@ -64,7 +65,8 @@ SRC = \
 	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
 	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER)) \
 	$(addprefix $(SRC_DIR)/http/model/, $(SRC_HTTP)) \
-	$(addprefix $(SRC_DIR)/shared/, $(SRC_SHARED))
+	$(addprefix $(SRC_DIR)/shared/, $(SRC_SHARED)) \
+	$(addprefix $(SRC_DIR)/router/, $(SRC_ROUTER))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
