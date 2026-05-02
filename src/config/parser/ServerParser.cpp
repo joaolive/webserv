@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseServer.cpp                                    :+:      :+:    :+:   */
+/*   ServerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/29 04:02:20 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:35:44 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:38:19 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parseServer.hpp"
+#include "config/parser/ServerParser.hpp"
 
-int ParseServer::parseDirective(const std::string& directive, const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseDirective(const std::string& directive, const std::vector<std::string>& args, ServerConfig& config) {
 	static const std::map<std::string, DirectiveHandler> dispatchTable = initDispatchTable();
 	std::map<std::string, DirectiveHandler>::const_iterator it = dispatchTable.find(directive);
 	if (it != dispatchTable.end()) {
@@ -23,22 +23,22 @@ int ParseServer::parseDirective(const std::string& directive, const std::vector<
 	return (1);
 }
 
-std::map<std::string, ParseServer::DirectiveHandler> ParseServer::initDispatchTable() {
+std::map<std::string, ServerParser::DirectiveHandler> ServerParser::initDispatchTable() {
 	std::map<std::string, DirectiveHandler> table;
 	
-	table["listen"] = &ParseServer::parseListen;
-	table["host"] = &ParseServer::parseHost;
-	table["root"] = &ParseServer::parseRoot;
-	table["autoindex"] = &ParseServer::parseAutoindex;
-	table["client_max_body_size"] = &ParseServer::parseClientMaxBodySize;
-	table["index"] = &ParseServer::parseIndex;
-	table["server_name"] = &ParseServer::parseServerName;
-	table["error_page"] = &ParseServer::parseErrorPage;
+	table["listen"] = &ServerParser::parseListen;
+	table["host"] = &ServerParser::parseHost;
+	table["root"] = &ServerParser::parseRoot;
+	table["autoindex"] = &ServerParser::parseAutoindex;
+	table["client_max_body_size"] = &ServerParser::parseClientMaxBodySize;
+	table["index"] = &ServerParser::parseIndex;
+	table["server_name"] = &ServerParser::parseServerName;
+	table["error_page"] = &ServerParser::parseErrorPage;
 	
 	return (table);
 }
 
-int ParseServer::parseListen(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseListen(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("listen", args, 1, 1))
 		return (1);
 	std::stringstream ss(args[0]);
@@ -56,7 +56,7 @@ int ParseServer::parseListen(const std::vector<std::string>& args, ServerConfig&
 	return (0);
 }
 
-int ParseServer::parseHost(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseHost(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("host", args, 1, 1))
 		return (1);
 	struct in_addr addr;
@@ -73,14 +73,14 @@ int ParseServer::parseHost(const std::vector<std::string>& args, ServerConfig& c
 	return (0);
 }
 
-int ParseServer::parseRoot(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseRoot(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("root", args, 1, 1))
 		return (1);
 	config.setRoot(args[0]); 
 	return (0);
 }
 
-int ParseServer::parseAutoindex(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseAutoindex(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("autoindex", args, 1, 1))
 		return (1);
 	if (args[0] != "on" && args[0] != "off") {
@@ -91,7 +91,7 @@ int ParseServer::parseAutoindex(const std::vector<std::string>& args, ServerConf
 	return (0);
 }
 
-int ParseServer::parseClientMaxBodySize(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseClientMaxBodySize(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("client_max_body_size", args, 1, 1))
 		return (1);
 	uint64_t base_size = 0;
@@ -111,7 +111,7 @@ int ParseServer::parseClientMaxBodySize(const std::vector<std::string>& args, Se
 	return (0);
 }
 
-int ParseServer::parseIndex(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseIndex(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("index", args, 1))
 		return (1);
 	for (size_t i = 0; i < args.size(); i++)
@@ -120,7 +120,7 @@ int ParseServer::parseIndex(const std::vector<std::string>& args, ServerConfig& 
 }
 
 
-int ParseServer::parseServerName(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseServerName(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("server_name", args, 1))
 		return (1);
 	for (size_t i = 0; i < args.size(); i++)
@@ -128,7 +128,7 @@ int ParseServer::parseServerName(const std::vector<std::string>& args, ServerCon
 	return (0);
 }
 
-int ParseServer::parseErrorPage(const std::vector<std::string>& args, ServerConfig& config) {
+int ServerParser::parseErrorPage(const std::vector<std::string>& args, ServerConfig& config) {
 	if (ParseUtils::validateArgsCount("error_page", args, 2, 2))
 		return (1);
 	const std::string uri = args.back();

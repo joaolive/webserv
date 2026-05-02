@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serverConfig.cpp                                   :+:      :+:    :+:   */
+/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:17:13 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:56:41 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:24:38 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "serverConfig.hpp"
+#include "config/model/ServerConfig.hpp"
 
 ServerConfig::ServerConfig()
 	: _port(0),

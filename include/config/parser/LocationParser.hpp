@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseLocation.hpp                                  :+:      :+:    :+:   */
+/*   LocationParser.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/29 19:23:22 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 00:33:21 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:32:58 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include "parseUtils.hpp"
-#include "locationConfig.hpp"
+#include "config/parser/ParseUtils.hpp"
+#include "config/model/LocationConfig.hpp"
 
-class ParseLocation {
+class LocationParser {
 	private:
 		typedef int (*DirectiveHandler)(const std::vector<std::string>&, LocationConfig&);
 		static std::map<std::string, DirectiveHandler> initDispatchTable();

@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   locationConfig.cpp                                 :+:      :+:    :+:   */
+/*   LocationConfig.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:04:19 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 01:05:50 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/01 15:24:28 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "locationConfig.hpp"
-#include "serverConfig.hpp"
+#include "config/model/LocationConfig.hpp"
+#include "config/model/ServerConfig.hpp"
 
 LocationConfig::LocationConfig() 
 	: _path(""), 

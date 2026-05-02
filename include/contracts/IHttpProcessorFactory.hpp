@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   IHttpProcessorFactory.hpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/28 18:20:04 by joaolive          #+#    #+#             */
-/*   Updated: 2026/04/30 19:34:58 by joaolive         ###   ########.fr       */
+/*   Created: 2026/05/01 02:55:00 by joaolive          #+#    #+#             */
+/*   Updated: 2026/05/01 03:13:06 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <vector>
-#include "serverConfig.hpp"
+#include <string>
+#include <stdint.h>
+#include "IHttpProcessor.hpp"
 
-class Config {
-	private:
-		std::vector<ServerConfig> _servers;
+class IHttpProcessorFactory {
 	public:
-		Config();
-		Config(const Config& rhs);
-		Config& operator=(const Config& rhs);
-		~Config();
+		virtual ~IHttpProcessorFactory() {}
 
-		const std::vector<ServerConfig>& getServers() const;
-		void addServer(const ServerConfig& server);
+		virtual IHttpProcessor* createProcessor(const std::string& client_ip, uint16_t server_port) = 0;
 };
