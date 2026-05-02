@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 02:46:39 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 03:12:43 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/02 15:02:05 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ class IHttpProcessor {
 	public:
 		virtual ~IHttpProcessor() {}
 
-		virtual void feedChunk(const std::string& chunck) = 0;
+		virtual void feedChunk(const char* data, size_t bytes_read) = 0;
 		virtual bool isReady() const = 0;
 		virtual std::string buildResponse() = 0;
 		virtual void reset() = 0;
