@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/02 22:19:26 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/02 23:52:09 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ SRC_IO =  $(addsuffix .cpp, ReadFile)
 SRC_LEXER =  $(addsuffix .cpp, Lexer)
 SRC_MODEL =  $(addsuffix .cpp, Config LocationConfig ServerConfig)
 SRC_PARSER = $(addsuffix .cpp, LocationParser Parser ParseUtils ServerParser)
-SRC_HTTP = $(addsuffix .cpp, HttpProcessorFactoryImpl HttpRequestParser)
+SRC_HTTP = $(addsuffix .cpp, HttpProcessorFactoryImpl HttpRequestParser HttpProcessorImpl)
 SRC_SHARED = $(addsuffix .cpp, Utils)
 SRC_ROUTER = $(addsuffix .cpp, HttpRouter)
 
