@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:01:26 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 09:19:18 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/03 10:31:07 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ ClientHandler::ClientHandler(int fd,
 		_processor(fc.createProcessor(ip, port)), 
 		_writeBuffer(), 
 		_writeOffset(0), 
-		_closeAfterWrite(false) {
+		_closeAfterWrite(false), 
+		_lastActivity(time(NULL)) {
 }
 
 ClientHandler::~ClientHandler(void) {
@@ -51,7 +52,13 @@ void ClientHandler::onReading(void) {
 	char			buffer[bufSize];
 	ssize_t 		rbytes = recv(_fd, buffer, bufSize, 0);
 
-	if (rbytes <= 0) {
+	_lastActivity = time(NULL);
+	if (rbytes == 0) {
+		std::cerr << "client desconected: " << _ip << ":" << _port << std::endl;
+		closeConnection();
+		return ;
+	} else if (rbytes < 0) {
+		std::cerr << "error server" << std::endl;
 		closeConnection();
 		return ;
 	}
@@ -66,6 +73,7 @@ void ClientHandler::onWriting(void) {
 	size_t		remaning = 0;
 	ssize_t		nsent = 0;
 
+	_lastActivity = time(NULL);
 	if (_writeBuffer.empty() || _writeOffset >= _writeBuffer.size()) {
 		if (_closeAfterWrite) {
 			closeConnection();
@@ -112,4 +120,12 @@ void ClientHandler::prepareResponse(void) {
 
 void ClientHandler::closeConnection(void) {
 	_server->removeHandler(_fd);
+}
+
+bool ClientHandler::isTimeout(time_t now) const {
+	return (now - _lastActivity) > TIMEOUT;
+}
+
+void ClientHandler::onTimeout(void) {
+	// TODO: sendTimeoutResponse (IHttpProcessor error pages/responses)
 }

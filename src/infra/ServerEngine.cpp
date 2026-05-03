@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 09:26:04 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/03 10:29:21 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,12 @@ int ServerEngine::createIoMonitor(void) {
 
 void ServerEngine::startEventLoop(void) {
 	epoll_event		events[IO_MONITOR_SIZE];
-	int				nEvents = 0;
-	int				fd = 0;
+	const int		timeout = 5000;
+	int				nEvents = 0, fd = 0;
+	time_t			now;
 
 	while (true) {
-		nEvents = epoll_wait(_ioMonitorFd, events, IO_MONITOR_SIZE, -1);
+		nEvents = epoll_wait(_ioMonitorFd, events, IO_MONITOR_SIZE, timeout);
 		if (nEvents < 0)
 			throw std::runtime_error("epoll_wait"); // TODO: create exception
 
@@ -70,6 +71,15 @@ void ServerEngine::startEventLoop(void) {
 			fd = events[i].data.fd;
 			_handlers[fd]->event(events[i]);
 		}
+
+		now = time(NULL);
+		std::vector<int> toRemove;
+		std::map<int, IEventHandler*>::iterator it = _handlers.begin();
+		for (; it != _handlers.end(); ++it)
+			if (it->second->isTimeout(now))
+				toRemove.push_back(it->first);
+		for (size_t i = 0; i < toRemove.size(); ++i)
+			removeHandler(toRemove[i]);
 	}
 }
 

@@ -6,11 +6,12 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 09:17:43 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/03 10:30:04 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AcceptHandler.hpp"
+#include <arpa/inet.h>
 
 #include "infra/ServerEngine.hpp"
 
@@ -31,7 +32,7 @@ void AcceptHandler::event(epoll_event& event) {
 	IEventHandler*		client = NULL;
 	int					fd = 0, flags = 0;
 	uint16_t			port = 0;
-	std::string			ip = NULL;
+	char			ipBuffer[INET_ADDRSTRLEN] = {0};
 
 	if ((fd = accept(_server->getSocketFd(), reinterpret_cast<sockaddr*>(&addr), &addrLen)) < 0) {
 		std::cerr << "accept" << std::endl; // TODO: insert in the log
@@ -39,9 +40,13 @@ void AcceptHandler::event(epoll_event& event) {
 	}
 
 	port = ntohs(addr.sin_port);
-	ip = std::string(reinterpret_cast<const char*>(&addr.sin_addr.s_addr), 4);
-	client = new ClientHandler(fd, port, ip, _server, _factory);
-	std::cout << "client connected: " << ip << ":" << port << std::endl;
+	if (inet_ntop(AF_INET, &addr.sin_addr, ipBuffer, sizeof(ipBuffer)) == NULL) {
+		std::cerr << "inet_ntop" << std::endl;
+		close(fd);
+		return ;
+	}
+	client = new ClientHandler(fd, port, std::string(ipBuffer), _server, _factory);
+	std::cout << "client connected: " << ipBuffer << ":" << port << std::endl;
 
 	flags = fcntl(fd, F_GETFL, 0);
 	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
@@ -50,4 +55,15 @@ void AcceptHandler::event(epoll_event& event) {
 	}
 
 	_server->addHandler(fd, EPOLLIN, client);
+}
+
+void AcceptHandler::closeConnection(void) {
+	_server->removeHandler(_fd);
+}
+
+bool AcceptHandler::isTimeout(time_t now) const {
+	return false;
+}
+
+void AcceptHandler::onTimeout(void) {
 }

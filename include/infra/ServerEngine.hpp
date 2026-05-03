@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:21:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 09:26:50 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/03 10:24:23 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <netinet/in.h>
 #include <stdexcept>
 #include <map>
+#include <vector>
 
 #ifndef IO_MONITOR_SIZE
 # define IO_MONITOR_SIZE 2048
@@ -33,6 +34,9 @@
 # define STREAMING_BUFFER_SIZE 8
 #endif
 
+#ifndef TIMEOUT
+# define TIMEOUT 30
+#endif
 
 class ServerEngine {
 	private:

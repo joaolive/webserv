@@ -6,12 +6,13 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 09:19:44 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/03 10:29:46 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include <sys/time.h>
 #include "IEventHandler.hpp"
 #include "contracts/IHttpProcessor.hpp"
 #include "contracts/IHttpProcessorFactory.hpp"
@@ -28,12 +29,11 @@ class ClientHandler : public IEventHandler {
 		std::string		_writeBuffer;
 		size_t			_writeOffset;
 		bool			_closeAfterWrite;
-		unsigned long	_timeout;
+		time_t			_lastActivity;
 	protected:
 		void onReading(void);
 		void onWriting(void);
 		void prepareResponse(void);
-		void closeConnection(void);
 	public:
 		ClientHandler(int fd, 
 					  uint32_t port, 
@@ -43,4 +43,7 @@ class ClientHandler : public IEventHandler {
 		virtual ~ClientHandler(void);
 
 		void event(epoll_event& event);
+		void closeConnection(void);
+		bool isTimeout(time_t now) const;
+		void onTimeout(void);
 };
