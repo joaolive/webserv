@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:47:21 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/27 17:13:19 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/02 19:59:01 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <sys/epoll.h>
 
 class IEventHandler {
-public:
-	virtual			~IEventHandler(void) {};
-	virtual void	handleEvent(epoll_event& event) = 0;
+	public:
+		virtual ~IEventHandler(void) {};
+		virtual void event(epoll_event& event) = 0;
 };
