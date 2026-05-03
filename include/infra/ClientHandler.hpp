@@ -5,50 +5,42 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/27 16:37:55 by mhidani           #+#    #+#             */
-/*   Updated: 2026/04/28 10:53:45 by mhidani          ###   ########.fr       */
+/*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
+/*   Updated: 2026/05/03 09:19:44 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "IEventHandler.hpp"
-#include "IHttpServer.hpp"
-#include "ClientHandler.hpp"
-#include "Reactor.hpp"
+#include "contracts/IHttpProcessor.hpp"
+#include "contracts/IHttpProcessorFactory.hpp"
 
-#include <errno.h>
-#include <sys/socket.h>
-#include <sys/epoll.h>
-
-#ifndef READ_BUFFER_SIZE
-# define READ_BUFFER_SIZE 1024
-#endif
-
-enum ClientHandlerState {
-	READING,
-	WRITING,
-	CLOSED
-};
-
-class Reactor;
+class ServerEngine;
 
 class ClientHandler : public IEventHandler {
-private:
-	int				_state;
-	int				_fd;
-	Reactor*		_eventLoop;
-	IHttpServer*	_http;
-	std::string		_readBuffer;
-	std::string		_writeBuffer;
+	private:
+		int				_fd;
+		uint32_t		_port;
+		std::string		_ip;
+		ServerEngine*	_server;
+		IHttpProcessor* _processor;
+		std::string		_writeBuffer;
+		size_t			_writeOffset;
+		bool			_closeAfterWrite;
+		unsigned long	_timeout;
+	protected:
+		void onReading(void);
+		void onWriting(void);
+		void prepareResponse(void);
+		void closeConnection(void);
+	public:
+		ClientHandler(int fd, 
+					  uint32_t port, 
+					  std::string ip, 
+					  ServerEngine* sv, 
+					  IHttpProcessorFactory& fc);
+		virtual ~ClientHandler(void);
 
-	void	closeConnection(void);
-
-public:
-			ClientHandler(const int& fd, Reactor* eventLoop, IHttpServer* http);
-	virtual	~ClientHandler(void);
-
-	void	handleEvent(epoll_event& event);
-	int		read(void);
-	int		write(void);
+		void event(epoll_event& event);
 };
