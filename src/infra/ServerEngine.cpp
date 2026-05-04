@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 10:29:21 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/04 16:21:48 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ int ServerEngine::createServer(void) {
 	struct sockaddr_in	addr;
 
 	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		throw std::runtime_error("socket"); // TODO: create exception
+		throw SocketException::Create();
 	if (setsockopt(_socketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		throw std::runtime_error("setsockopt"); // TODO: create exception
+		throw SocketException::SetOptions(fd);
 
 	addr.sin_family = AF_INET;
 	addr.sin_family = htonl(_config->getHost());
@@ -38,11 +38,11 @@ int ServerEngine::createServer(void) {
 	flags = fcntl(fd, F_GETFL, 0);
 
 	if (bind(_socketFd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
-		throw std::runtime_error("bind"); // TODO: create exception
+		throw SocketException::BindPort(fd, _config->getPort());
 	if (listen(fd, SOMAXCONN) < 0) // TODO: check SOMAXCONN to backlog conn
-		throw std::runtime_error("listen"); // TODO: create exception
+		throw SocketException::Listening(fd);
 	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) )
-		throw std::runtime_error("fcntl O_NONBLOCK");
+		throw SocketException::SetOptionFd("non block", fd);
 	return fd;
 }
 
