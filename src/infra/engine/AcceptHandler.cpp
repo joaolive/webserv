@@ -6,14 +6,11 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/03 10:30:04 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/05 11:27:49 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "AcceptHandler.hpp"
-#include <arpa/inet.h>
-
-#include "infra/ServerEngine.hpp"
+#include "infra/engine/AcceptHandler.hpp"
 
 AcceptHandler::AcceptHandler(const int& fd, 
 							 ServerEngine* sv, 

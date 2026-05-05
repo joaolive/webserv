@@ -6,7 +6,7 @@
 #    By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/02 22:56:41 by mhidani          ###   ########.fr        #
+#    Updated: 2026/05/05 11:32:09 by mhidani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,8 @@ SRC_IO =  $(addsuffix .cpp, ReadFile)
 SRC_LEXER =  $(addsuffix .cpp, Lexer)
 SRC_MODEL =  $(addsuffix .cpp, Config LocationConfig ServerConfig)
 SRC_PARSER = $(addsuffix .cpp, LocationParser Parser ParseUtils ServerParser)
-SRC_INFRA = $(addsuffix .cpp, ServerEngine AcceptHandler ClientHandler)
+SRC_INFRA_ENG = $(addsuffix .cpp, AcceptHandler ClientHandler ServerEngine)
+SRC_INFRA_EXP = $(addsuffix .cpp, IoMonitorException SocketException)
 
 # Source files
 SRC = \
@@ -62,7 +63,8 @@ SRC = \
 	$(addprefix $(SRC_DIR)/config/lexer/, $(SRC_LEXER)) \
 	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
 	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER)) \
-	$(addprefix $(SRC_DIR)/infra/, $(SRC_INFRA))
+	$(addprefix $(SRC_DIR)/infra/engine/, $(SRC_INFRA_ENG)) \
+	$(addprefix $(SRC_DIR)/infra/exceptions/, $(SRC_INFRA_EXP))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
