@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 15:38:47 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/04 16:18:14 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/05 08:29:59 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class SocketException {
 		};
 		class SetOptions : public std::exception {
 			private:
-				int	_fd;
+				int			_fd;
 			public:
 				SetOptions(const int& fd);
 				virtual const char* what() const throw();
@@ -41,7 +41,7 @@ class SocketException {
 		};
 		class Listening : public std::exception {
 			private:
-				int	_fd;
+				int			_fd;
 			public:
 				Listening(const int& fd);
 				virtual const char* what() const throw();
