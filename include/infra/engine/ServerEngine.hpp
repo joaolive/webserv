@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:21:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/05 08:30:36 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/05 11:34:35 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #include "AcceptHandler.hpp"
 #include "config/model/ServerConfig.hpp"
 #include "contracts/IHttpProcessorFactory.hpp"
-#include "exceptions/SocketException.hpp"
-#include "exceptions/IoMonitorException.hpp"
+#include "exception/SocketException.hpp"
+#include "exception/IoMonitorException.hpp"
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>

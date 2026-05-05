@@ -6,7 +6,7 @@
 #    By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/05 11:32:09 by mhidani          ###   ########.fr        #
+#    Updated: 2026/05/05 11:35:13 by mhidani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ SRC = \
 	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
 	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER)) \
 	$(addprefix $(SRC_DIR)/infra/engine/, $(SRC_INFRA_ENG)) \
-	$(addprefix $(SRC_DIR)/infra/exceptions/, $(SRC_INFRA_EXP))
+	$(addprefix $(SRC_DIR)/infra/exception/, $(SRC_INFRA_EXP))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
