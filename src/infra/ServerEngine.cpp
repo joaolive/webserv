@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/04 16:21:48 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/05 11:22:04 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int ServerEngine::createIoMonitor(void) {
 
 	if ((fd = epoll_create1(0)) < 0) {
 		close(_socketFd);
-		throw std::runtime_error("epoll_create1"); // TODO: create exception
+		throw IoMonitorException::Create();
 	}
 	return fd;
 }
@@ -65,7 +65,7 @@ void ServerEngine::startEventLoop(void) {
 	while (true) {
 		nEvents = epoll_wait(_ioMonitorFd, events, IO_MONITOR_SIZE, timeout);
 		if (nEvents < 0)
-			throw std::runtime_error("epoll_wait"); // TODO: create exception
+			throw IoMonitorException::Wait(_ioMonitorFd);
 
 		for (int i = 0; i < nEvents; i++) {
 			fd = events[i].data.fd;
@@ -122,13 +122,13 @@ void ServerEngine::addHandler(const int& fd, const uint32_t& events, IEventHandl
 	ev.data.fd = fd;
 
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_ADD, fd, &ev) == -1)
-		throw std::runtime_error("epoll_ctl: add"); // TODO: create exception
+		throw IoMonitorException::AddInterestCtrlEvent(_ioMonitorFd);
 	_handlers[fd] = hdl;
 }
 
 void ServerEngine::removeHandler(const int& fd) {
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_DEL, fd, NULL) == -1)
-		throw std::runtime_error("epoll_ctl: remove"); // TODO: create exception
+		throw IoMonitorException::RemoveInterestCtrlEvent(_ioMonitorFd);
 
 	delete _handlers[fd];
 	_handlers.erase(fd);
@@ -142,5 +142,5 @@ void ServerEngine::changeHandlerState(const int& fd, const uint32_t& state) {
 	ev.data.fd = fd;
 	
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_MOD, fd, &ev) < 0)
-		throw std::runtime_error("epoll_ctl: change"); // TODO: create exception
+		throw IoMonitorException::ModifyInterestCtrlEvent(_ioMonitorFd);
 }
