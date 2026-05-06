@@ -6,11 +6,13 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/05 11:27:49 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/06 14:58:14 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "infra/engine/AcceptHandler.hpp"
+#include "infra/engine/ServerEngine.hpp"
+#include "infra/engine/ClientHandler.hpp"
 
 AcceptHandler::AcceptHandler(const int& fd, 
 							 ServerEngine* sv, 
@@ -23,13 +25,13 @@ AcceptHandler::AcceptHandler(const int& fd,
 AcceptHandler::~AcceptHandler(void) {
 }
 
-void AcceptHandler::event(epoll_event& event) {
+void AcceptHandler::event(epoll_event&) {
 	struct sockaddr_in	addr;
 	socklen_t			addrLen = sizeof(addr);
 	IEventHandler*		client = NULL;
 	int					fd = 0, flags = 0;
 	uint16_t			port = 0;
-	char			ipBuffer[INET_ADDRSTRLEN] = {0};
+	char				ipBuffer[INET_ADDRSTRLEN] = {0};
 
 	if ((fd = accept(_server->getSocketFd(), reinterpret_cast<sockaddr*>(&addr), &addrLen)) < 0) {
 		std::cerr << "accept" << std::endl; // TODO: insert in the log
@@ -58,7 +60,7 @@ void AcceptHandler::closeConnection(void) {
 	_server->removeHandler(_fd);
 }
 
-bool AcceptHandler::isTimeout(time_t now) const {
+bool AcceptHandler::isTimeout(time_t) const {
 	return false;
 }
 

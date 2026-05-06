@@ -6,16 +6,16 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/05 11:29:17 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/06 15:02:46 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "infra/engine/ServerEngine.hpp"
 
 ServerEngine::ServerEngine(ServerConfig* config)
-	:	_config(config),  
-		_socketFd(createServer()),
-		_ioMonitorFd(createIoMonitor()) {
+	:	_socketFd(createServer()),
+		_ioMonitorFd(createIoMonitor()), 
+		_config(config) {
 }
 
 ServerEngine::~ServerEngine(void) {

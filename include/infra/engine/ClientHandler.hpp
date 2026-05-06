@@ -6,17 +6,18 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/05 11:28:58 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/06 14:56:14 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <sys/time.h>
-#include "ServerEngine.hpp"
-#include "IEventHandler.hpp"
+#include "infra/engine/IEventHandler.hpp"
 #include "contracts/IHttpProcessor.hpp"
 #include "contracts/IHttpProcessorFactory.hpp"
+
+class ServerEngine;
 
 class ClientHandler : public IEventHandler {
 	private:
