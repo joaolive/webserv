@@ -11,6 +11,7 @@
 				"twxs.cmake",
 				"ms-vscode.cmake-tools",
 				"vadimcn.vscode-lldb",
+				"postman.postman-for-vscode",
 				"ms-vscode.makefile-tools",
 				"kube.42header"
 			],
