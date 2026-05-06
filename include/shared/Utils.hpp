@@ -1,27 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IHttpProcessor.hpp                                 :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/01 02:46:39 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/02 22:31:57 by joaolive         ###   ########.fr       */
+/*   Created: 2026/05/02 20:46:01 by joaolive          #+#    #+#             */
+/*   Updated: 2026/05/02 20:47:43 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <string>
+#include <cctype>
 
-class IHttpProcessor {
+class Utils {
 	public:
-		virtual ~IHttpProcessor() {}
-
-		virtual void feedChunk(const char* data, size_t bytes_read) = 0;
-		virtual bool isReady() const = 0;
-		virtual const std::vector<char>& buildResponse() = 0;
-		virtual void reset() = 0;
-		virtual bool shouldCloseConnection() const = 0;
-		virtual bool hasError() const = 0;
+		static std::string toLowerCase(const std::string& str);
+		static std::string trim(const std::string& str);
 };

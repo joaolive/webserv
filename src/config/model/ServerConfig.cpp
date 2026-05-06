@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:17:13 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/01 15:24:38 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/06 12:30:02 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,14 @@ const std::vector<std::string>& ServerConfig::getServerNames() const {
 
 const std::map<uint16_t, std::string>& ServerConfig::getErrorPages() const {
 	return (_error_pages);
+}
+
+std::string ServerConfig::getErrorPage(uint16_t code) const {
+	std::map<uint16_t, std::string>::const_iterator it = _error_pages.find(code);
+	if (it != _error_pages.end()) {
+		return (it->second);
+	}
+	return ("");
 }
 
 const std::vector<LocationConfig>& ServerConfig::getLocations() const {
