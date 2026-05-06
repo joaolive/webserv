@@ -47,7 +47,7 @@ class ServerEngine {
 		std::map<int, IEventHandler*>	_handlers;
 		ServerConfig*					_config;
 	protected:
-		int createServer(void);
+		int createServer(ServerConfig* config);
 		int createIoMonitor(void);
 		void startEventLoop(void);
 	public:

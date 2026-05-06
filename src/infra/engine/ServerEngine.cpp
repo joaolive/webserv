@@ -6,14 +6,14 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 15:02:46 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/06 15:36:00 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "infra/engine/ServerEngine.hpp"
 
 ServerEngine::ServerEngine(ServerConfig* config)
-	:	_socketFd(createServer()),
+	: 	_socketFd(createServer(config)),
 		_ioMonitorFd(createIoMonitor()), 
 		_config(config) {
 }
@@ -23,21 +23,21 @@ ServerEngine::~ServerEngine(void) {
 	close(_ioMonitorFd);
 }
 
-int ServerEngine::createServer(void) {
+int ServerEngine::createServer(ServerConfig* config) {
 	int					fd, opt, flags;
 	struct sockaddr_in	addr;
 
 	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		throw SocketException::Create();
-	if (setsockopt(_socketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		throw SocketException::SetOptions(fd);
+	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+		throw SocketException::SetOptions(fd); // TODO: Estou tendo erro aqui
 
 	addr.sin_family = AF_INET;
-	addr.sin_family = htonl(_config->getHost());
-	addr.sin_port = htons(_config->getPort());
+	addr.sin_addr.s_addr = config->getHost();
+	addr.sin_port = htons(config->getPort());
 	flags = fcntl(fd, F_GETFL, 0);
 
-	if (bind(_socketFd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
+	if (bind(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
 		throw SocketException::BindPort(fd, _config->getPort());
 	if (listen(fd, SOMAXCONN) < 0) // TODO: check SOMAXCONN to backlog conn
 		throw SocketException::Listening(fd);
@@ -69,6 +69,8 @@ void ServerEngine::startEventLoop(void) {
 
 		for (int i = 0; i < nEvents; i++) {
 			fd = events[i].data.fd;
+			if (_handlers.find(fd) == _handlers.end())
+				continue;
 			_handlers[fd]->event(events[i]);
 		}
 
@@ -93,7 +95,7 @@ int ServerEngine::start(ServerConfig* config, IHttpProcessorFactory& factory) {
 		server.startEventLoop();
 
 	} catch (const std::exception& e) {
-		std::cerr << "error: " << e.what() << std::endl; // TODO: create log capture
+		std::cerr << "log: " << e.what() << std::endl; // TODO: create log capture
 		return -1;
 	}
 	return 0;
