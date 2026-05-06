@@ -6,11 +6,12 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 19:29:27 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/05 15:03:37 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/06 12:50:07 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <map>
+#include <fstream>
 #include <sstream>
 #include "http/handler/RequestHandler.hpp"
 // #include "http/handler/GetHandler.hpp"
@@ -54,18 +55,36 @@ const std::vector<char>& RequestHandler::getResponse() const {
 }
 
 std::vector<char> RequestHandler::genErrorResponse(int status_code, const ServerConfig* server, bool keep_alive) {
-	std::vector<char> buffer;
-	std::stringstream ss;
-	// TODO: implementar página de erro com base no ServerConfig.
-	ss << "HTTP/1.1 " << status_code << " Error\r\n"
-		<< "Content-Type: text/html\r\n";
+	std::vector<char> body;
+	std::string path = (server != NULL) ? server->getErrorPage(status_code) : "";
+	if (!path.empty()) {
+		std::string full_path = server->getRoot() + path;
+		std::ifstream file(full_path.c_str(), std::ios::binary | std::ios::ate);
+		if (file.is_open()) {
+			std::streamsize size = file.tellg();
+			body.resize(size);
+			file.seekg(0, std::ios::beg);
+			if (!file.read(body.data(), size)) {
+				body.clear();
+		}
+	}
+	if (body.empty()) {
+		std::stringstream ss;
+		ss << "<html><body><center><h1>" << status_code << "</h1></center><hr><center>Webserv/1.0</center></body></html>";
+		std::string fallback = ss.str();
+		body.assign(fallback.begin(), fallback.end());
+	}
+	std::stringstream headers;
+	headers << "HTTP/1.1 " << status_code << " Error\r\n"
+			<< "Content-Type: text/html\r\n"
+			<< "Content-Length: " << body.size() << "\r\n";
 	if (!keep_alive)
-		ss << "Connection: close\r\n";
-	ss << "\r\n"
-		<< "<html><body><center><h1>" << status_code << "</h1></center><hr><center>Webserv/1.0</center></body></html>";
-	std::string resp = ss.str();
-	buffer.assign(resp.begin(), resp.end());
-	return (buffer);
+		headers << "Connection: close\r\n";
+	headers << "\r\n";
+	std::string header_str = headers.str();
+	std::vector<char> response(header_str.begin(), header_str.end());
+	response.insert(response.end(), body.begin(), body.end());
+	return (response);
 }
 
 
