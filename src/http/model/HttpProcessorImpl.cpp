@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 22:50:16 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/02 23:54:25 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/06 14:38:49 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void HttpProcessorImpl::feedChunk(const char* data, size_t bytes_read) {
 			_resolved_location = HttpRouter::routeLocation(*_resolved_server, req.uri);
 		size_t max_body = _resolved_location ? _resolved_location->getClientMaxBodySize() :
 							(_resolved_server ? _resolved_server->getClientMaxBodySize() : 0);
-		(max_body > 0 && req.body.size() > max_body) ? _buildErrorResponse(413) : _buildSucessResponse(); 
+		(max_body > 0 && req.body.size() > max_body) ? _buildErrorResponse(413) : _buildSuccessResponse(); 
 		_is_ready = true;
 	}
 }
@@ -55,7 +55,7 @@ void HttpProcessorImpl::_buildSuccessResponse() {
 		_parser.getRequest(),
 		_resolved_server,
 		_resolved_location,
-		!_should_close
+		!_should_close,
 		_client_ip
 	);
 	handler.execute();
@@ -63,7 +63,7 @@ void HttpProcessorImpl::_buildSuccessResponse() {
 }
 
 void HttpProcessorImpl::_buildErrorResponse(int status_code) {
-	_response_buffer = RequestHandler::generateErrorResponse(
+	_response_buffer = RequestHandler::genErrorResponse(
 		status_code,
 		_resolved_server,
 		!_should_close

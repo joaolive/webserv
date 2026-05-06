@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 13:10:52 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/06 14:09:45 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/06 14:35:31 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,4 @@ class GetHandler : public IMethodHandler {
 					const LocationConfig* location,
 					bool keep_alive,
 					std::vector<char>& response_buffer);
-}
+};

@@ -6,7 +6,7 @@
 #    By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/06 14:19:29 by joaolive         ###   ########.fr        #
+#    Updated: 2026/05/06 14:33:55 by joaolive         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,8 +66,8 @@ SRC = \
 	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
 	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER)) \
 	$(addprefix $(SRC_DIR)/http/model/, $(SRC_HTTP)) \
-	$(addprefix $(SRC_DIR)/router/, $(SRC_ROUTER)) \
-	$(addprefix $(SRC_DIR)/handler/, $(SRC_HANDLER)) \
+	$(addprefix $(SRC_DIR)/http/router/, $(SRC_ROUTER)) \
+	$(addprefix $(SRC_DIR)/http/handler/, $(SRC_HANDLER)) \
 	$(addprefix $(SRC_DIR)/shared/, $(SRC_SHARED))
 
 # Object files

@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 19:29:27 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/06 12:50:07 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/06 15:02:03 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include "http/handler/RequestHandler.hpp"
-// #include "http/handler/GetHandler.hpp"
+#include "http/handler/GetHandler.hpp"
 // #include "http/handler/PostHandler.hpp"
 // #include "http/handler/PutHandler.hpp"
 // #include "http/handler/PatchHandler.hpp"
@@ -30,10 +30,32 @@ RequestHandler::RequestHandler(const HttpRequest& request, const ServerConfig* s
 
 RequestHandler::~RequestHandler() {}
 
+// TODO: Implementar os handlers abaixo.
+
+static IMethodHandler* createGet() {
+	return (new GetHandler());
+}
+
+// static IMethodHandler* createPost() {
+// 	return (new PostHandler());
+// }
+
+// static IMethodHandler* createPut() {
+// 	return (new PutHandler());
+// }
+
+// static IMethodHandler* createPatch() {
+// 	return (new PatchHandler());
+// }
+
+// static IMethodHandler* createDelete() {
+// 	return (new DeleteHandler());
+// }
+
 void RequestHandler::execute() {
 	static std::map<std::string, HandlerCreator> dispatch_table;
 	if (dispatch_table.empty()) {
-		// dispatch_table["GET"] = &createGet;
+		dispatch_table["GET"] = &createGet;
 		// dispatch_table["POST"] = &createPost;
 		// dispatch_table["PUT"] = &createPut;
 		// dispatch_table["PATCH"] = &createPatch;
@@ -64,7 +86,7 @@ std::vector<char> RequestHandler::genErrorResponse(int status_code, const Server
 			std::streamsize size = file.tellg();
 			body.resize(size);
 			file.seekg(0, std::ios::beg);
-			if (!file.read(body.data(), size)) {
+			if (!file.read(body.data(), size))
 				body.clear();
 		}
 	}
@@ -86,26 +108,3 @@ std::vector<char> RequestHandler::genErrorResponse(int status_code, const Server
 	response.insert(response.end(), body.begin(), body.end());
 	return (response);
 }
-
-
-// TODO: Implementar os handlers abaixo.
-
-// static IMethodHandler* createGet() {
-// 	return (new GetHandler());
-// }
-
-// static IMethodHandler* createPost() {
-// 	return (new PostHandler());
-// }
-
-// static IMethodHandler* createPut() {
-// 	return (new PutHandler());
-// }
-
-// static IMethodHandler* createPatch() {
-// 	return (new PatchHandler());
-// }
-
-// static IMethodHandler* createDelete() {
-// 	return (new DeleteHandler());
-// }
