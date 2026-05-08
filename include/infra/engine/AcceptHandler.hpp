@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AcceptHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 18:12:36 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/07 20:08:09 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 12:13:43 by vscode           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class AcceptHandler : public IEventHandler {
 	private:
 		ServerEngine*	_serverEngine;
 		int				_fd;
+		Stage			_stage;
 	protected:
 		void prepareClient(int& fd);
 	public:
@@ -40,4 +41,5 @@ class AcceptHandler : public IEventHandler {
 		void closeConnection(void);
 		bool isTimeout(time_t) const;
 		void onTimeout(void);
+		Stage stage(void) const;
 };

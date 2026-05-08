@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/07 20:39:05 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 12:12:16 by vscode           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class ClientHandler : public IEventHandler {
 		size_t			_writeOffset;
 		bool			_closeAfterWrite;
 		time_t			_lastActivity;
+		Stage			_stage;
 	protected:
 		void onReading(void);
 		void onWriting(void);
@@ -43,4 +44,5 @@ class ClientHandler : public IEventHandler {
 		void closeConnection(void);
 		bool isTimeout(time_t now) const;
 		void onTimeout(void);
+		Stage stage(void) const;
 };

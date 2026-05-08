@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/07 20:14:12 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 14:51:34 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 AcceptHandler::AcceptHandler(ServerEngine* serverEngine) {
 	_serverEngine = serverEngine;
 	_fd = serverEngine->getSocketFd();
+	_stage = ACCEPTING;
 }
 
 AcceptHandler::~AcceptHandler(void) {
@@ -41,12 +42,14 @@ void AcceptHandler::event(epoll_event&) {
 		close(fd);
 		return ;
 	}
-	client = new ClientHandler(fd, ipBuffer, port, _serverEngine); // TODO: change assign
+	client = new ClientHandler(fd, ipBuffer, port, _serverEngine);
 	std::cout << "client connected: " << ipBuffer << ":" << port << std::endl;
 
 	flags = fcntl(fd, F_GETFL, 0);
 	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
 		std::cerr << "fcntl" << std::endl; // TODO: create exceptio
+		delete client;
+		close(fd);
 		return ;
 	}
 
@@ -54,7 +57,7 @@ void AcceptHandler::event(epoll_event&) {
 }
 
 void AcceptHandler::closeConnection(void) {
-	_serverEngine->removeHandler(_fd);
+	_stage = CLOSED;
 }
 
 bool AcceptHandler::isTimeout(time_t) const {
@@ -62,4 +65,8 @@ bool AcceptHandler::isTimeout(time_t) const {
 }
 
 void AcceptHandler::onTimeout(void) {
+}
+
+AcceptHandler::Stage AcceptHandler::stage(void) const {
+	return _stage;
 }

@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:01:26 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/07 21:34:16 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 12:26:05 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,19 @@ ClientHandler::ClientHandler(const int fd,
 							 uint16_t port,
 							 ServerEngine *serverEngine) {
 	_fd = fd;
-	_ip = std::string(ip);
-	_port = port;
+	_ip = std::string(ip); // TODO: check
+	_port = port; // TODO: check
 	_serverEngine = serverEngine;
-	_httpProcessor = _serverEngine->getHttpProcFactory()->createProcessor(_ip, _serverEngine->getConfig()->getPort());
+	_httpProcessor = _serverEngine->getHttpProcFactory()->createProcessor(_ip, _serverEngine->getConfig()->getPort()); // TODO: check
 	_writeBuffer = "";
 	_writeOffset = 0;
 	_closeAfterWrite = false;
 	_lastActivity = time(NULL);
+	_stage = READING;
 }
 
 ClientHandler::~ClientHandler(void) {
+	delete _httpProcessor;
 }
 
 void ClientHandler::event(epoll_event &ev) {
@@ -48,8 +50,12 @@ void ClientHandler::event(epoll_event &ev) {
 void ClientHandler::onReading(void) {
 	const size_t bufSize = STREAMING_BUFFER_SIZE * 1024 + 1;
 	char buffer[bufSize];
-	ssize_t rbytes = recv(_fd, buffer, bufSize, 0);
+	ssize_t rbytes = 0;
 
+	if (_stage != READING)
+		return ;
+
+	rbytes = recv(_fd, buffer, bufSize, 0);
 	_lastActivity = time(NULL);
 	if (rbytes == 0) {
 		std::cerr << "client desconected: " << _ip << ":" << _serverEngine->getConfig()->getPort() << std::endl;
@@ -70,6 +76,9 @@ void ClientHandler::onWriting(void) {
 	const char *data = NULL;
 	size_t remaning = 0;
 	ssize_t nsent = 0;
+
+	if (_stage != WRITING)
+		return ;
 
 	_lastActivity = time(NULL);
 	if (_writeBuffer.empty() || _writeOffset >= _writeBuffer.size()) {
@@ -107,6 +116,7 @@ void ClientHandler::onWriting(void) {
 void ClientHandler::prepareResponse(void) {
 	const std::vector<char>& response = _httpProcessor->buildResponse();
 
+	_stage = WRITING;
 	_writeBuffer.erase(0, _writeOffset);
 	_writeOffset = 0;
 	_writeBuffer.assign(response.begin(), response.end());
@@ -116,7 +126,8 @@ void ClientHandler::prepareResponse(void) {
 }
 
 void ClientHandler::closeConnection(void) {
-	_serverEngine->removeHandler(_fd);
+	_stage = CLOSED;
+	std::cout << "client disconected " << _ip << ":" << _port << std::endl;
 }
 
 bool ClientHandler::isTimeout(time_t now) const {
@@ -125,4 +136,8 @@ bool ClientHandler::isTimeout(time_t now) const {
 
 void ClientHandler::onTimeout(void) {
 	// TODO: sendTimeoutResponse (IHttpProcessor error pages/responses)
+}
+
+ClientHandler::Stage ClientHandler::stage(void) const {
+	return _stage;
 }
