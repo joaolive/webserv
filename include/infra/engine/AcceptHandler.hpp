@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 18:12:36 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 14:58:19 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/07 20:08:09 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,12 @@ class ServerEngine;
 
 class AcceptHandler : public IEventHandler {
 	private:
-		int						_fd;
-		ServerEngine*			_server;
-		IHttpProcessorFactory&	_factory;
+		ServerEngine*	_serverEngine;
+		int				_fd;
 	protected:
 		void prepareClient(int& fd);
 	public:
-		AcceptHandler(const int& fd, 
-					  ServerEngine* sv, 
-					  IHttpProcessorFactory& fc);
+		AcceptHandler(ServerEngine* serverEngine);
 		virtual	~AcceptHandler(void);
 
 		void event(epoll_event&);

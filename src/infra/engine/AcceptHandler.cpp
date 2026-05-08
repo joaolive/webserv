@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 14:58:14 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/07 20:14:12 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,9 @@
 #include "infra/engine/ServerEngine.hpp"
 #include "infra/engine/ClientHandler.hpp"
 
-AcceptHandler::AcceptHandler(const int& fd, 
-							 ServerEngine* sv, 
-							 IHttpProcessorFactory& fc)
-	:	_fd(fd), 
-		_server(sv), 
-		_factory(fc) {
+AcceptHandler::AcceptHandler(ServerEngine* serverEngine) {
+	_serverEngine = serverEngine;
+	_fd = serverEngine->getSocketFd();
 }
 
 AcceptHandler::~AcceptHandler(void) {
@@ -33,7 +30,7 @@ void AcceptHandler::event(epoll_event&) {
 	uint16_t			port = 0;
 	char				ipBuffer[INET_ADDRSTRLEN] = {0};
 
-	if ((fd = accept(_server->getSocketFd(), reinterpret_cast<sockaddr*>(&addr), &addrLen)) < 0) {
+	if ((fd = accept(_serverEngine->getSocketFd(), reinterpret_cast<sockaddr*>(&addr), &addrLen)) < 0) {
 		std::cerr << "accept" << std::endl; // TODO: insert in the log
 		return ;
 	}
@@ -44,7 +41,7 @@ void AcceptHandler::event(epoll_event&) {
 		close(fd);
 		return ;
 	}
-	client = new ClientHandler(fd, port, std::string(ipBuffer), _server, _factory);
+	client = new ClientHandler(fd, ipBuffer, port, _serverEngine); // TODO: change assign
 	std::cout << "client connected: " << ipBuffer << ":" << port << std::endl;
 
 	flags = fcntl(fd, F_GETFL, 0);
@@ -53,11 +50,11 @@ void AcceptHandler::event(epoll_event&) {
 		return ;
 	}
 
-	_server->addHandler(fd, EPOLLIN, client);
+	_serverEngine->addHandler(fd, EPOLLIN, client);
 }
 
 void AcceptHandler::closeConnection(void) {
-	_server->removeHandler(_fd);
+	_serverEngine->removeHandler(_fd);
 }
 
 bool AcceptHandler::isTimeout(time_t) const {
