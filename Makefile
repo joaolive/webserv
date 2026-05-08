@@ -6,7 +6,7 @@
 #    By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/23 11:00:12 by joaolive          #+#    #+#              #
-#    Updated: 2026/05/07 18:56:53 by mhidani          ###   ########.fr        #
+#    Updated: 2026/05/07 20:41:45 by mhidani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,6 +59,7 @@ SRC_HTTP = $(addsuffix .cpp, HttpProcessorFactoryImpl HttpRequestParser HttpProc
 SRC_ROUTER = $(addsuffix .cpp, HttpRouter)
 SRC_HANDLER = $(addsuffix .cpp, GetHandler RequestHandler)
 SRC_SHARED = $(addsuffix .cpp, Utils)
+SRC_SERVER = $(addsuffix .cpp, Server)
 
 # Source files
 SRC = \
@@ -68,11 +69,12 @@ SRC = \
 	$(addprefix $(SRC_DIR)/config/model/, $(SRC_MODEL)) \
 	$(addprefix $(SRC_DIR)/config/parser/, $(SRC_PARSER)) \
 	$(addprefix $(SRC_DIR)/infra/engine/, $(SRC_INFRA_ENG)) \
-	$(addprefix $(SRC_DIR)/infra/exception/, $(SRC_INFRA_EXP))
+	$(addprefix $(SRC_DIR)/infra/exception/, $(SRC_INFRA_EXP)) \
 	$(addprefix $(SRC_DIR)/http/model/, $(SRC_HTTP)) \
 	$(addprefix $(SRC_DIR)/http/router/, $(SRC_ROUTER)) \
 	$(addprefix $(SRC_DIR)/http/handler/, $(SRC_HANDLER)) \
-	$(addprefix $(SRC_DIR)/shared/, $(SRC_SHARED))
+	$(addprefix $(SRC_DIR)/shared/, $(SRC_SHARED)) \
+	$(addprefix $(SRC_DIR)/server/, $(SRC_SERVER))
 
 # Object files
 SRC_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
