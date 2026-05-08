@@ -1,26 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/07 20:00:48 by mhidani           #+#    #+#             */
+/*   Updated: 2026/05/07 20:00:50 by mhidani          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <iostream>
-#include <arpa/inet.h>
-#include "config/model/ServerConfig.hpp"
-#include "infra/engine/ServerEngine.hpp"
-#include "contracts/IHttpProcessorFactory.hpp"
+#include "server/Server.hpp"
 
-#include "mockTest.hpp"
+int main(int argc, char** argv) {
+	int exitCode = 0;
 
-int main(void) {
-	ServerConfig* config = new ServerConfig();
-	config->setPort(8080);
-	config->setHost(htonl(INADDR_LOOPBACK));
-	config->setRoot("/tmp");
-	config->setAutoindex(false);
-	config->setClientMaxBodySize(1024);
-	config->addIndex("index.html");
+	if (argc != 2) {
+		std::cerr << "error try enter: ./bin/webserv server.conf" << std::endl;
+		return 1;
+	}
 
-	MockHttpProcessorFactory httpFactory;
+	exitCode = Server::start(argv[1]);
 
-	ServerEngine::start(config, httpFactory);
-
-	delete config;
-
-	return (0);
+	return exitCode;
 }
