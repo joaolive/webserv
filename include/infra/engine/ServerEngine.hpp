@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerEngine.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:21:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/07 20:05:42 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 01:01:46 by vscode           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
+#include <csignal>
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
