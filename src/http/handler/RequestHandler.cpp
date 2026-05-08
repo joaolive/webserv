@@ -6,13 +6,14 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 19:29:27 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/06 15:02:03 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/08 18:21:56 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <memory>
 #include "http/handler/RequestHandler.hpp"
 #include "http/handler/GetHandler.hpp"
 // #include "http/handler/PostHandler.hpp"
@@ -61,13 +62,11 @@ void RequestHandler::execute() {
 		// dispatch_table["PATCH"] = &createPatch;
 		// dispatch_table["DELETE"] = &createDelete;
 	}
-	IMethodHandler* handler = NULL;
 	std::map<std::string, HandlerCreator>::iterator it = dispatch_table.find(_request.method);
-	if (it != dispatch_table.end())
-		handler = it->second();
-	if (handler != NULL) {
-		handler->handle(_request, _server, _location, _keep_alive, _response_buffer);
-		delete (handler);
+	if (it != dispatch_table.end()) {
+		std::auto_ptr<IMethodHandler> handler(it->second());
+		if (handler.get() != NULL)
+			handler->handle(_request, _server, _location, _keep_alive, _response_buffer);
 	} else
 		_response_buffer = genErrorResponse(501, _server, _keep_alive);
 }
