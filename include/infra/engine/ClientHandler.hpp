@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 14:56:14 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/07 20:39:05 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ class ClientHandler : public IEventHandler {
 		int				_fd;
 		uint32_t		_port;
 		std::string		_ip;
-		ServerEngine*	_server;
-		IHttpProcessor* _processor;
+		ServerEngine*	_serverEngine;
+		IHttpProcessor* _httpProcessor;
 		std::string		_writeBuffer;
 		size_t			_writeOffset;
 		bool			_closeAfterWrite;
@@ -35,11 +35,8 @@ class ClientHandler : public IEventHandler {
 		void onWriting(void);
 		void prepareResponse(void);
 	public:
-		ClientHandler(int fd, 
-					  uint32_t port, 
-					  std::string ip, 
-					  ServerEngine* sv, 
-					  IHttpProcessorFactory& fc);
+		ClientHandler(const int fd, const char* ip, uint16_t port, 
+					  ServerEngine* serverEngine);
 		virtual ~ClientHandler(void);
 
 		void event(epoll_event& event);

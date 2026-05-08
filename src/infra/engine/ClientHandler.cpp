@@ -6,34 +6,33 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:01:26 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 14:56:18 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/07 21:34:16 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "infra/engine/ClientHandler.hpp"
 #include "infra/engine/ServerEngine.hpp"
+#include <vector>
 
-ClientHandler::ClientHandler(int fd, 
-							 uint32_t port, 
-							 std::string ip, 
-							 ServerEngine* sv, 
-							 IHttpProcessorFactory& fc)
-	:	_fd(fd), 
-		_port(port), 
-		_ip(ip), 
-		_server(sv), 
-		_processor(fc.createProcessor(ip, port)), 
-		_writeBuffer(), 
-		_writeOffset(0), 
-		_closeAfterWrite(false), 
-		_lastActivity(time(NULL)) {
+ClientHandler::ClientHandler(const int fd,
+							 const char* ip,
+							 uint16_t port,
+							 ServerEngine *serverEngine) {
+	_fd = fd;
+	_ip = std::string(ip);
+	_port = port;
+	_serverEngine = serverEngine;
+	_httpProcessor = _serverEngine->getHttpProcFactory()->createProcessor(_ip, _serverEngine->getConfig()->getPort());
+	_writeBuffer = "";
+	_writeOffset = 0;
+	_closeAfterWrite = false;
+	_lastActivity = time(NULL);
 }
 
 ClientHandler::~ClientHandler(void) {
-	delete _processor;
 }
 
-void ClientHandler::event(epoll_event& ev) {
+void ClientHandler::event(epoll_event &ev) {
 	if (ev.events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
 		closeConnection();
 		return ;
@@ -47,13 +46,13 @@ void ClientHandler::event(epoll_event& ev) {
 }
 
 void ClientHandler::onReading(void) {
-	const size_t	bufSize = STREAMING_BUFFER_SIZE * 1024 + 1;
-	char			buffer[bufSize];
-	ssize_t 		rbytes = recv(_fd, buffer, bufSize, 0);
+	const size_t bufSize = STREAMING_BUFFER_SIZE * 1024 + 1;
+	char buffer[bufSize];
+	ssize_t rbytes = recv(_fd, buffer, bufSize, 0);
 
 	_lastActivity = time(NULL);
 	if (rbytes == 0) {
-		std::cerr << "client desconected: " << _ip << ":" << _port << std::endl;
+		std::cerr << "client desconected: " << _ip << ":" << _serverEngine->getConfig()->getPort() << std::endl;
 		closeConnection();
 		return ;
 	} else if (rbytes < 0) {
@@ -62,15 +61,15 @@ void ClientHandler::onReading(void) {
 		return ;
 	}
 
-	_processor->feedChunk(buffer, static_cast<size_t>(rbytes));
-	if (_processor->isReady() || _processor->hasError())
+	_httpProcessor->feedChunk(buffer, static_cast<size_t>(rbytes));
+	if (_httpProcessor->isReady() || _httpProcessor->hasError())
 		prepareResponse();
 }
 
 void ClientHandler::onWriting(void) {
-	const char*	data = NULL;
-	size_t		remaning = 0;
-	ssize_t		nsent = 0;
+	const char *data = NULL;
+	size_t remaning = 0;
+	ssize_t nsent = 0;
 
 	_lastActivity = time(NULL);
 	if (_writeBuffer.empty() || _writeOffset >= _writeBuffer.size()) {
@@ -78,7 +77,7 @@ void ClientHandler::onWriting(void) {
 			closeConnection();
 			return ;
 		}
-		_server->changeHandlerState(_fd, EPOLLIN);
+		_serverEngine->changeHandlerState(_fd, EPOLLIN);
 		return ;
 	}
 
@@ -95,30 +94,29 @@ void ClientHandler::onWriting(void) {
 	if (_writeOffset >= _writeBuffer.size()) {
 		if (_closeAfterWrite) {
 			closeConnection();
-			return;
+			return ;
 		}
 
 		_writeBuffer.clear();
 		_writeOffset = 0;
-		_processor->reset();
-		_server->changeHandlerState(_fd, EPOLLIN);
+		_httpProcessor->reset();
+		_serverEngine->changeHandlerState(_fd, EPOLLIN);
 	}
 }
 
 void ClientHandler::prepareResponse(void) {
-	std::string	response = _processor->buildResponse();
+	const std::vector<char>& response = _httpProcessor->buildResponse();
 
 	_writeBuffer.erase(0, _writeOffset);
 	_writeOffset = 0;
-	_writeBuffer += response;
+	_writeBuffer.assign(response.begin(), response.end());
 
-	_closeAfterWrite = _processor->shouldCloseConnection() 
-					|| _processor->hasError();
-	_server->changeHandlerState(_fd, EPOLLOUT);
+	_closeAfterWrite = _httpProcessor->shouldCloseConnection() || _httpProcessor->hasError();
+	_serverEngine->changeHandlerState(_fd, EPOLLOUT);
 }
 
 void ClientHandler::closeConnection(void) {
-	_server->removeHandler(_fd);
+	_serverEngine->removeHandler(_fd);
 }
 
 bool ClientHandler::isTimeout(time_t now) const {
