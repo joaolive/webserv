@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 14:51:34 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 15:25:48 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,37 +23,46 @@ AcceptHandler::AcceptHandler(ServerEngine* serverEngine) {
 AcceptHandler::~AcceptHandler(void) {
 }
 
-void AcceptHandler::event(epoll_event&) {
+ClientHandler* AcceptHandler::prepareClient(const int& socketFd) {
 	struct sockaddr_in	addr;
 	socklen_t			addrLen = sizeof(addr);
-	IEventHandler*		client = NULL;
-	int					fd = 0, flags = 0;
+	int					clientFd = -1, flags = 0;
 	uint16_t			port = 0;
-	char				ipBuffer[INET_ADDRSTRLEN] = {0};
-
-	if ((fd = accept(_serverEngine->getSocketFd(), reinterpret_cast<sockaddr*>(&addr), &addrLen)) < 0) {
-		std::cerr << "accept" << std::endl; // TODO: insert in the log
-		return ;
-	}
+	char				ip[INET_ADDRSTRLEN] = {0};
+	ClientHandler*		client = NULL;
+	
+	clientFd = accept(socketFd, reinterpret_cast<sockaddr*>(&addr), &addrLen);
+	if (clientFd < 0)
+		return NULL;
 
 	port = ntohs(addr.sin_port);
-	if (inet_ntop(AF_INET, &addr.sin_addr, ipBuffer, sizeof(ipBuffer)) == NULL) {
+	if (inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip)) == NULL) {
 		std::cerr << "inet_ntop" << std::endl;
-		close(fd);
-		return ;
+		close(clientFd);
+		return NULL;
 	}
-	client = new ClientHandler(fd, ipBuffer, port, _serverEngine);
-	std::cout << "client connected: " << ipBuffer << ":" << port << std::endl;
 
-	flags = fcntl(fd, F_GETFL, 0);
-	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+	client = new ClientHandler(clientFd, ip, port, _serverEngine);
+	flags = fcntl(clientFd, F_GETFL, 0);
+	if (fcntl(clientFd, F_SETFL, flags | O_NONBLOCK) < 0) {
 		std::cerr << "fcntl" << std::endl; // TODO: create exceptio
 		delete client;
-		close(fd);
-		return ;
+		close(clientFd);
+		return NULL;
 	}
+	return client;
+}
 
-	_serverEngine->addHandler(fd, EPOLLIN, client);
+void AcceptHandler::event(epoll_event&) {
+	const int socketFd = _serverEngine->getSocketFd();
+	
+	while (true) {
+		ClientHandler* client = prepareClient(socketFd);
+		if (client == NULL)
+			break;
+		_serverEngine->addHandler(client->getFd(), EPOLLIN, client);
+		std::cout << "client connected " << client->getIp() << ":" << client->getPort() << std::endl;
+	}
 }
 
 void AcceptHandler::closeConnection(void) {
