@@ -6,7 +6,7 @@
 /*   By: joaolive <joaolive@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 19:29:27 by joaolive          #+#    #+#             */
-/*   Updated: 2026/05/08 18:21:56 by joaolive         ###   ########.fr       */
+/*   Updated: 2026/05/08 18:59:30 by joaolive         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ static IMethodHandler* createGet() {
 // }
 
 void RequestHandler::execute() {
+	if (_location && redirect)
+		return ;
 	static std::map<std::string, HandlerCreator> dispatch_table;
 	if (dispatch_table.empty()) {
 		dispatch_table["GET"] = &createGet;
@@ -106,4 +108,20 @@ std::vector<char> RequestHandler::genErrorResponse(int status_code, const Server
 	std::vector<char> response(header_str.begin(), header_str.end());
 	response.insert(response.end(), body.begin(), body.end());
 	return (response);
+}
+
+bool RequestHandler::redirect(void) {
+	std::pair<uint16_t, std::string> redir = _location->getReturn();
+	if (!redir.first)
+		return (false);
+	std::stringstream ss;
+	ss << "HTTP/1.1 " << redir.first << " Moved Temporarily\r\n"
+		<< "Location: " << redir.second << "\r\n"
+		<< "Content-Length: 0\r\n";
+	if (!_keep_alive)
+		ss << "Connection: close\r\n";
+	ss << "\r\n";
+	std::string res = ss.str();
+	_response_buffer.assign(res.begin(), res.end());
+	return (true);
 }
