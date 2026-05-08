@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:01:26 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 12:26:05 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 16:38:40 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,26 +73,27 @@ void ClientHandler::onReading(void) {
 }
 
 void ClientHandler::onWriting(void) {
-	const char *data = NULL;
-	size_t remaning = 0;
-	ssize_t nsent = 0;
-
 	if (_stage != WRITING)
 		return ;
 
 	_lastActivity = time(NULL);
+
 	if (_writeBuffer.empty() || _writeOffset >= _writeBuffer.size()) {
 		if (_closeAfterWrite) {
 			closeConnection();
 			return ;
 		}
+		_writeBuffer.clear();
+		_writeOffset = 0;
+		_httpProcessor->reset();
+		_stage = READING;
 		_serverEngine->changeHandlerState(_fd, EPOLLIN);
 		return ;
 	}
 
-	data = _writeBuffer.data() + _writeOffset;
-	remaning = _writeBuffer.size() - _writeOffset;
-	nsent = send(_fd, data, remaning, MSG_NOSIGNAL);
+	const char* data = _writeBuffer.data() + _writeOffset;
+	size_t remaning = _writeBuffer.size() - _writeOffset;
+	ssize_t nsent = send(_fd, data, remaning, MSG_NOSIGNAL);
 
 	if (nsent < 0) {
 		closeConnection();
@@ -109,6 +110,7 @@ void ClientHandler::onWriting(void) {
 		_writeBuffer.clear();
 		_writeOffset = 0;
 		_httpProcessor->reset();
+		_stage = READING;
 		_serverEngine->changeHandlerState(_fd, EPOLLIN);
 	}
 }
@@ -116,16 +118,18 @@ void ClientHandler::onWriting(void) {
 void ClientHandler::prepareResponse(void) {
 	const std::vector<char>& response = _httpProcessor->buildResponse();
 
-	_stage = WRITING;
-	_writeBuffer.erase(0, _writeOffset);
-	_writeOffset = 0;
 	_writeBuffer.assign(response.begin(), response.end());
+	_writeOffset = 0;
+	_stage = WRITING;
 
 	_closeAfterWrite = _httpProcessor->shouldCloseConnection() || _httpProcessor->hasError();
 	_serverEngine->changeHandlerState(_fd, EPOLLOUT);
 }
 
 void ClientHandler::closeConnection(void) {
+	if (_stage == CLOSED)
+		return ;
+
 	_stage = CLOSED;
 	std::cout << "client disconected " << _ip << ":" << _port << std::endl;
 }
@@ -140,4 +144,16 @@ void ClientHandler::onTimeout(void) {
 
 ClientHandler::Stage ClientHandler::stage(void) const {
 	return _stage;
+}
+
+int ClientHandler::getFd(void) const {
+	return _fd;
+}
+
+std::string ClientHandler::getIp(void) const {
+	return _ip;
+}
+
+uint32_t ClientHandler::getPort(void) const {
+	return _port;
 }

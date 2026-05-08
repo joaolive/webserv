@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 12:12:16 by vscode           ###   ########.fr       */
+/*   Updated: 2026/05/08 15:02:54 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ class ServerEngine;
 class ClientHandler : public IEventHandler {
 	private:
 		int				_fd;
-		uint32_t		_port;
 		std::string		_ip;
+		uint32_t		_port;
 		ServerEngine*	_serverEngine;
 		IHttpProcessor* _httpProcessor;
 		std::string		_writeBuffer;
@@ -45,4 +45,8 @@ class ClientHandler : public IEventHandler {
 		bool isTimeout(time_t now) const;
 		void onTimeout(void);
 		Stage stage(void) const;
+
+		int getFd(void) const;
+		std::string getIp(void) const;
+		uint32_t getPort(void) const;
 };
