@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AcceptHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 18:12:36 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 12:13:43 by vscode           ###   ########.fr       */
+/*   Updated: 2026/05/08 15:18:28 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include "contracts/IHttpProcessorFactory.hpp"
 
 class ServerEngine;
+class ClientHandler;
 
 class AcceptHandler : public IEventHandler {
 	private:
@@ -32,7 +33,7 @@ class AcceptHandler : public IEventHandler {
 		int				_fd;
 		Stage			_stage;
 	protected:
-		void prepareClient(int& fd);
+		ClientHandler* prepareClient(const int& socketFd);
 	public:
 		AcceptHandler(ServerEngine* serverEngine);
 		virtual	~AcceptHandler(void);
