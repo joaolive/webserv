@@ -6,16 +6,18 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/06 15:36:00 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/07 20:31:07 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "infra/engine/ServerEngine.hpp"
 
-ServerEngine::ServerEngine(ServerConfig* config)
-	: 	_socketFd(createServer(config)),
-		_ioMonitorFd(createIoMonitor()), 
-		_config(config) {
+ServerEngine::ServerEngine(const ServerConfig* conf, 
+						   IHttpProcessorFactory* httpProcFactory) {
+	_config = conf;
+	_httpProcFactory = httpProcFactory;
+	_socketFd = createServer();
+	_ioMonitorFd = createIoMonitor();
 }
 
 ServerEngine::~ServerEngine(void) {
@@ -23,7 +25,7 @@ ServerEngine::~ServerEngine(void) {
 	close(_ioMonitorFd);
 }
 
-int ServerEngine::createServer(ServerConfig* config) {
+int ServerEngine::createServer(void) {
 	int					fd, opt, flags;
 	struct sockaddr_in	addr;
 
@@ -33,8 +35,8 @@ int ServerEngine::createServer(ServerConfig* config) {
 		throw SocketException::SetOptions(fd); // TODO: Estou tendo erro aqui
 
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = config->getHost();
-	addr.sin_port = htons(config->getPort());
+	addr.sin_addr.s_addr = _config->getHost();
+	addr.sin_port = htons(_config->getPort());
 	flags = fcntl(fd, F_GETFL, 0);
 
 	if (bind(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
@@ -85,22 +87,6 @@ void ServerEngine::startEventLoop(void) {
 	}
 }
 
-int ServerEngine::start(ServerConfig* config, IHttpProcessorFactory& factory) {
-	try {
-		ServerEngine	server(config);
-		int				fd = server.getSocketFd();
-		AcceptHandler*	acceptHandler = new AcceptHandler(fd, &server, factory); 
-		
-		server.addHandler(fd, EPOLLIN, acceptHandler);
-		server.startEventLoop();
-
-	} catch (const std::exception& e) {
-		std::cerr << "log: " << e.what() << std::endl; // TODO: create log capture
-		return -1;
-	}
-	return 0;
-}
-
 int ServerEngine::getSocketFd(void) const {
 	return _socketFd;
 }
@@ -109,8 +95,12 @@ int ServerEngine::getIoMonitorFd(void) const {
 	return _ioMonitorFd;
 }
 
-ServerConfig* ServerEngine::getConfig(void) const {
+const ServerConfig* ServerEngine::getConfig(void) const {
 	return _config;
+}
+
+IHttpProcessorFactory* ServerEngine::getHttpProcFactory(void) const {
+	return _httpProcFactory;
 }
 
 IEventHandler* ServerEngine::getHandler(const int& fd) {
