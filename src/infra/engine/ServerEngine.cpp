@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 14:53:47 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/08 16:52:15 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,16 @@ void ServerEngine::startEventLoop(void) {
 
 		for (int i = 0; i < nEvents; i++) {
 			fd = events[i].data.fd;
-			if (_handlers.find(fd) == _handlers.end())
+
+			std::map<int, IEventHandler*>::iterator it = _handlers.find(fd);
+			if (it == _handlers.end())
 				continue;
-			if (_handlers[fd]->stage() != IEventHandler::CLOSED)
-				_handlers[fd]->event(events[i]);
-			if (_handlers.find(fd) != _handlers.end() &&
-				_handlers[fd]->stage() == IEventHandler::CLOSED)
+
+			IEventHandler* handler = it->second;
+			if (handler->stage() != IEventHandler::CLOSED)
+				handler->event(events[i]);
+
+			if (handler->stage() == IEventHandler::CLOSED)
 				removeHandler(fd);
 		}
 
