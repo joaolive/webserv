@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 15:25:48 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/11 11:37:04 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ ClientHandler* AcceptHandler::prepareClient(const int& socketFd) {
 		return NULL;
 	}
 
-	client = new ClientHandler(clientFd, ip, port, _serverEngine);
 	flags = fcntl(clientFd, F_GETFL, 0);
 	if (fcntl(clientFd, F_SETFL, flags | O_NONBLOCK) < 0) {
 		std::cerr << "fcntl" << std::endl; // TODO: create exceptio
-		delete client;
 		close(clientFd);
 		return NULL;
 	}
+
+	client = new ClientHandler(clientFd, ip, port, _serverEngine);
 	return client;
 }
 
