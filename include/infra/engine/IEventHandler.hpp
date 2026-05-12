@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IEventHandler.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:47:21 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 12:15:07 by vscode           ###   ########.fr       */
+/*   Updated: 2026/05/11 21:07:23 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 
 class IEventHandler {
 	public:
-		enum Stage { ACCEPTING, READING, WRITING, CLOSED };
+		enum Stage { WAIT, READING, WRITING, ERROR, CLOSED };
 
 		virtual ~IEventHandler(void) {};
 		virtual void event(epoll_event& event) = 0;
-		virtual void closeConnection(void) = 0;
+		virtual void closeConnection(const Stage& stage) = 0;
 		virtual bool isTimeout(time_t now) const = 0;
 		virtual void onTimeout(void) = 0;
 		virtual Stage stage(void) const = 0;
