@@ -6,13 +6,14 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:00:06 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 15:02:54 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/11 21:56:25 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <sys/time.h>
+#include <vector>
 #include "infra/engine/IEventHandler.hpp"
 #include "contracts/IHttpProcessor.hpp"
 #include "contracts/IHttpProcessorFactory.hpp"
@@ -35,13 +36,14 @@ class ClientHandler : public IEventHandler {
 		void onReading(void);
 		void onWriting(void);
 		void prepareResponse(void);
+		void finishWriting(void);
 	public:
-		ClientHandler(const int fd, const char* ip, uint16_t port, 
+		ClientHandler(const int fd, const std::string ip, uint16_t port, 
 					  ServerEngine* serverEngine);
 		virtual ~ClientHandler(void);
 
 		void event(epoll_event& event);
-		void closeConnection(void);
+		void closeConnection(const Stage& stage);
 		bool isTimeout(time_t now) const;
 		void onTimeout(void);
 		Stage stage(void) const;
