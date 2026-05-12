@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 16:52:15 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/11 21:05:05 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ static void signalHandler(int) {
 }
 
 ServerEngine::ServerEngine(const ServerConfig *conf,
-						   IHttpProcessorFactory *httpProcFactory) {
-	_config = conf;
-	_httpProcFactory = httpProcFactory;
-	_socketFd = createServer();
-	_ioMonitorFd = createIoMonitor();
+						   IHttpProcessorFactory *httpProcFactory) 
+	:	_config(conf), 
+		_httpProcFactory(httpProcFactory), 
+		_socketFd(createServer()), 
+		_ioMonitorFd(createIoMonitor()) {
 }
 
 ServerEngine::~ServerEngine(void) {
@@ -38,7 +38,7 @@ int ServerEngine::createServer(void) {
 	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		throw SocketException::Create();
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		throw SocketException::SetOptions(fd); // TODO: Estou tendo erro aqui
+		throw SocketException::SetOptions(fd);
 
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = _config->getHost();
@@ -64,42 +64,60 @@ int ServerEngine::createIoMonitor(void) {
 	return fd;
 }
 
+void ServerEngine::onHandler(const int& idx, epoll_event* events) {
+	int				fd = events[idx].data.fd;
+	IEventHandler*	handler = _handlers[fd];
+
+	if (handler == NULL)
+		return;
+	
+	handler->event(events[idx]);
+	switch (handler->stage()) {
+		case IEventHandler::ERROR:	std::cerr << "error!";
+		case IEventHandler::CLOSED:	removeHandler(fd);	break;
+		default:										break;
+	}
+}
+
+void ServerEngine::dispatchHandler(const int& timeout) {
+	epoll_event	events[IO_MONITOR_SIZE];
+	const int	nEvents = epoll_wait(_ioMonitorFd, events, IO_MONITOR_SIZE, timeout);
+
+	if (nEvents < 0) throw IoMonitorException::Wait(_ioMonitorFd);
+
+	for (int i = 0; i < nEvents; i++) {
+		try {
+			onHandler(i, events);
+		} catch (const std::exception& e) {
+			// TODO: check call exception to http processor and send response error 
+			continue;
+		}
+	}
+}
+
 void ServerEngine::startEventLoop(void) {
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
-	epoll_event events[IO_MONITOR_SIZE];
 	const int timeout = 5000;
-	int nEvents = 0, fd = 0;
-	time_t now;
 
 	while (g_running) {
-		nEvents = epoll_wait(_ioMonitorFd, events, IO_MONITOR_SIZE, timeout);
-		if (nEvents < 0)
-			throw IoMonitorException::Wait(_ioMonitorFd);
+		try {
+			dispatchHandler(timeout);
 
-		for (int i = 0; i < nEvents; i++) {
-			fd = events[i].data.fd;
+			// Timeout
+			_registerTime = time(NULL);
+			// std::vector<int> toRemove;
+			// std::map<int, IEventHandler *>::iterator it = _handlers.begin();
+			// for (; it != _handlers.end(); ++it)
+			// 	if (it->second->isTimeout(now))
+			// 		toRemove.push_back(it->first);
+			// for (size_t i = 0; i < toRemove.size(); ++i)
+			// 	removeHandler(toRemove[i]);
 
-			std::map<int, IEventHandler*>::iterator it = _handlers.find(fd);
-			if (it == _handlers.end())
-				continue;
-
-			IEventHandler* handler = it->second;
-			if (handler->stage() != IEventHandler::CLOSED)
-				handler->event(events[i]);
-
-			if (handler->stage() == IEventHandler::CLOSED)
-				removeHandler(fd);
+		} catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+			continue ;
 		}
-
-		now = time(NULL);
-		std::vector<int> toRemove;
-		std::map<int, IEventHandler *>::iterator it = _handlers.begin();
-		for (; it != _handlers.end(); ++it)
-			if (it->second->isTimeout(now))
-				toRemove.push_back(it->first);
-		for (size_t i = 0; i < toRemove.size(); ++i)
-			removeHandler(toRemove[i]);
 	}
 }
 
@@ -123,7 +141,8 @@ IEventHandler *ServerEngine::getHandler(const int &fd) {
 	return _handlers[fd];
 }
 
-void ServerEngine::addHandler(const int &fd, const uint32_t &events, IEventHandler *hdl) {
+void ServerEngine::addHandler(const int &fd, const uint32_t &events, 
+							  IEventHandler *hdl) {
 	struct epoll_event ev;
 
 	ev.events = events;
@@ -131,6 +150,10 @@ void ServerEngine::addHandler(const int &fd, const uint32_t &events, IEventHandl
 
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_ADD, fd, &ev) == -1)
 		throw IoMonitorException::AddInterestCtrlEvent(_ioMonitorFd);
+
+	if (static_cast<size_t>(fd) >= _handlers.size())
+		_handlers.resize(fd + 1, NULL);
+
 	_handlers[fd] = hdl;
 }
 
@@ -139,8 +162,8 @@ void ServerEngine::removeHandler(const int &fd) {
 		throw IoMonitorException::RemoveInterestCtrlEvent(_ioMonitorFd);
 
 	delete _handlers[fd];
-	_handlers.erase(fd);
 	close(fd);
+	_handlers[fd] = NULL;
 }
 
 void ServerEngine::changeHandlerState(const int &fd, const uint32_t &state) {
@@ -151,4 +174,8 @@ void ServerEngine::changeHandlerState(const int &fd, const uint32_t &state) {
 
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_MOD, fd, &ev) < 0)
 		throw IoMonitorException::ModifyInterestCtrlEvent(_ioMonitorFd);
+}
+
+time_t ServerEngine::getRegisterTime(void) const {
+	return _registerTime;
 }

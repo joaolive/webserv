@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerEngine.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vscode <vscode@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:21:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/08 01:01:46 by vscode           ###   ########.fr       */
+/*   Updated: 2026/05/11 20:48:27 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,17 @@
 class ServerEngine {
 	private:
 		const ServerConfig*				_config;
-		IHttpProcessorFactory*	_httpProcFactory;
-		std::map<int, IEventHandler*>	_handlers;
+		IHttpProcessorFactory*			_httpProcFactory;
+		std::vector<IEventHandler*>		_handlers;
 		int								_socketFd;
 		int								_ioMonitorFd;
+		time_t							_registerTime;
 	protected:
 		int createServer(void);
 		int createIoMonitor(void);
+
+		void onHandler(const int& idx, epoll_event* events);
+		void dispatchHandler(const int& timeout);
 	public:
 		ServerEngine(const ServerConfig* config, 
 					 IHttpProcessorFactory* httpProcFactory);
@@ -63,7 +67,9 @@ class ServerEngine {
 		int getSocketFd(void) const;
 		int getIoMonitorFd(void) const;
 		IEventHandler* getHandler(const int& fd);
-		void addHandler(const int& fd, const uint32_t& events, IEventHandler* hdl);
+		void addHandler(const int& fd, const uint32_t& events, 
+						IEventHandler* handler);
 		void removeHandler(const int& fd);
 		void changeHandlerState(const int& fd, const uint32_t& state);
+		time_t getRegisterTime(void) const;
 };
