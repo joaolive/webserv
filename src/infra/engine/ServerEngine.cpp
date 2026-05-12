@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:33:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/11 21:05:05 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/12 19:13:46 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,18 @@ int ServerEngine::createIoMonitor(void) {
 	return fd;
 }
 
+void ServerEngine::onTimeout(void) {
+	std::vector<int>	toRemove;
+
+	for (int fd = 0; fd < static_cast<int>(_handlers.size()); ++fd)
+		if (_handlers[fd] != NULL && _handlers[fd]->isTimeout(_registerTime))
+			toRemove.push_back(fd);
+
+	for (size_t i = 0; i < toRemove.size(); i++)
+		if (_handlers[toRemove[i]] != NULL)
+			_handlers[toRemove[i]]->onTimeout();	
+}
+
 void ServerEngine::onHandler(const int& idx, epoll_event* events) {
 	int				fd = events[idx].data.fd;
 	IEventHandler*	handler = _handlers[fd];
@@ -73,7 +85,7 @@ void ServerEngine::onHandler(const int& idx, epoll_event* events) {
 	
 	handler->event(events[idx]);
 	switch (handler->stage()) {
-		case IEventHandler::ERROR:	std::cerr << "error!";
+		case IEventHandler::ERROR:						/* fallthrough */
 		case IEventHandler::CLOSED:	removeHandler(fd);	break;
 		default:										break;
 	}
@@ -98,21 +110,14 @@ void ServerEngine::dispatchHandler(const int& timeout) {
 void ServerEngine::startEventLoop(void) {
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
-	const int timeout = 5000;
+	const int timeout = 500;
 
 	while (g_running) {
 		try {
-			dispatchHandler(timeout);
-
-			// Timeout
 			_registerTime = time(NULL);
-			// std::vector<int> toRemove;
-			// std::map<int, IEventHandler *>::iterator it = _handlers.begin();
-			// for (; it != _handlers.end(); ++it)
-			// 	if (it->second->isTimeout(now))
-			// 		toRemove.push_back(it->first);
-			// for (size_t i = 0; i < toRemove.size(); ++i)
-			// 	removeHandler(toRemove[i]);
+
+			dispatchHandler(timeout);
+			onTimeout();			
 
 		} catch (const std::exception& e) {
 			std::cerr << e.what() << std::endl;
@@ -161,9 +166,12 @@ void ServerEngine::removeHandler(const int &fd) {
 	if (epoll_ctl(_ioMonitorFd, EPOLL_CTL_DEL, fd, NULL) == -1)
 		throw IoMonitorException::RemoveInterestCtrlEvent(_ioMonitorFd);
 
+	char drain[512];
+	while (recv(fd, drain, sizeof(drain), 0) > 0) ;
+
 	delete _handlers[fd];
-	close(fd);
 	_handlers[fd] = NULL;
+	close(fd);
 }
 
 void ServerEngine::changeHandlerState(const int &fd, const uint32_t &state) {

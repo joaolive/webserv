@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 19:21:08 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/11 20:48:27 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/12 19:17:32 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #endif
 
 #ifndef TIMEOUT
-# define TIMEOUT 30
+# define TIMEOUT 15
 #endif
 
 class ServerEngine {
@@ -53,6 +53,7 @@ class ServerEngine {
 		int createServer(void);
 		int createIoMonitor(void);
 
+		void onTimeout(void);
 		void onHandler(const int& idx, epoll_event* events);
 		void dispatchHandler(const int& timeout);
 	public:

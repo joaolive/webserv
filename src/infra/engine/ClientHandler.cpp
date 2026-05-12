@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 20:01:26 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/11 22:03:46 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/12 19:17:16 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,12 @@ ClientHandler::ClientHandler(const int fd,
 		_writeBuffer(""), 
 		_writeOffset(0), 
 		_closeAfterWrite(false), 
-		_lastActivity(0), 
-		_stage(READING), 
-		_httpProcessor(_serverEngine->getHttpProcFactory()
-									->createProcessor(_ip, _port)) {
+		_lastActivity(time(NULL)), 
+		_stage(READING) {
+	int	serverPort = serverEngine->getConfig()->getPort();
+
+	_httpProcessor = serverEngine->getHttpProcFactory()
+								 ->createProcessor(_ip, serverPort);
 }
 
 ClientHandler::~ClientHandler(void) {
@@ -41,7 +43,7 @@ void ClientHandler::event(epoll_event &ev) {
 
 	if (ev.events & EPOLLIN)
 		onReading();
-	else if (ev.events & EPOLLOUT)
+	if (ev.events & EPOLLOUT)
 		onWriting();
 }
 
@@ -53,17 +55,18 @@ void ClientHandler::onReading(void) {
 	if (_stage != READING)
 		return ;
 
-	_lastActivity = time(NULL);
 	rbytes = recv(_fd, buffer, bufSize, 0);
 	if (rbytes == 0) {
 		return closeConnection(CLOSED);
-	} else if (rbytes == -1) {
+	} else if (rbytes < 0) {
 		if (!isTimeout(_serverEngine->getRegisterTime()))
 			return ;
 
 		closeConnection(ERROR);
 		throw std::runtime_error("server error read request");
 	}
+	if (rbytes > 0)
+		_lastActivity = time(NULL);
 
 	_httpProcessor->feedChunk(buffer, static_cast<size_t>(rbytes));
 	if (_httpProcessor->isReady() || _httpProcessor->hasError())
@@ -73,8 +76,6 @@ void ClientHandler::onReading(void) {
 void ClientHandler::onWriting(void) {
 	if (_stage != WRITING)
 		return ;
-
-	_lastActivity = time(NULL);
 
 	if (_writeBuffer.empty() || _writeOffset >= _writeBuffer.size())
 		return finishWriting();
@@ -90,6 +91,8 @@ void ClientHandler::onWriting(void) {
 		closeConnection(ERROR);
 		throw std::runtime_error("server erro send response");
 	}
+	if (nSent > 0)
+		_lastActivity = time(NULL);
 
 	_writeOffset += static_cast<size_t>(nSent);
 	if (_writeOffset >= _writeBuffer.size())
@@ -117,27 +120,47 @@ void ClientHandler::finishWriting(void) {
 	_httpProcessor->reset();
 	_stage = READING;
 	_serverEngine->changeHandlerState(_fd, EPOLLIN);
+
+	std::cout << "finish writing" << std::endl;
 }
 
 void ClientHandler::closeConnection(const Stage& stage) {
-	if (_stage == stage)
+	if (_stage == CLOSED)
 		return ;
 
-	if (stage == ERROR)
-		std::cout << "client error ";
 	else if (stage == CLOSED)
-		std::cout << "client disconected ";
+		std::cout << "client disconnected ";
 
 	std::cout << _ip << ":" << _port << std::endl;
 	_stage = stage;
 }
 
 bool ClientHandler::isTimeout(time_t now) const {
-	return (now - _lastActivity) > TIMEOUT;
+	if (_stage != READING)
+		return false;
+	return (now - _lastActivity) + 1 >= TIMEOUT;
 }
 
+// TODO: create a way to display an error page 408 Request Timeout
 void ClientHandler::onTimeout(void) {
 	// TODO: sendTimeoutResponse (IHttpProcessor error pages/responses)
+	std::cout << "client timeout " << _ip << ":" << _port << std::endl;
+	
+	// Test 408 Request Timeout Response
+	std::stringstream response;
+	response << "HTTP/1.1 408 Request Timeout\r\n"
+			 << "Content-Type: text/plain; charset=utf-8\r\n"
+			 << "Connection: close\r\n"
+			 << "\r\n"
+			 << "408 Request Timeout: A requisição demorou muito para ser enviada.\r\n";
+	_writeBuffer = response.str();
+	_writeOffset = 0;
+	_closeAfterWrite = true;
+	_httpProcessor->reset();
+	_stage = WRITING;
+	_serverEngine->changeHandlerState(_fd, EPOLLOUT);
+	_lastActivity = time(NULL);
+	// Test 408 Request Timeout Response
 }
 
 ClientHandler::Stage ClientHandler::stage(void) const {

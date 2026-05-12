@@ -6,7 +6,7 @@
 /*   By: mhidani <mhidani@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 13:54:52 by mhidani           #+#    #+#             */
-/*   Updated: 2026/05/11 21:50:45 by mhidani          ###   ########.fr       */
+/*   Updated: 2026/05/12 19:19:39 by mhidani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,9 @@ AcceptHandler::~AcceptHandler(void) {
 }
 
 int AcceptHandler::acceptConnection(const int& fd, sockaddr_in& addr) {
-	socklen_t	addrLn = sizeof(addr);
-	int			clientFd = accept(fd, 
-								  reinterpret_cast<sockaddr*>(&addr), 
-								  &addrLn);
+	socklen_t	len = sizeof(addr);
+	int			clientFd = accept(fd, reinterpret_cast<sockaddr*>(&addr), &len);
 
-	if (clientFd < 0) throw std::runtime_error("AcceptHandler::accptClient");
 	return clientFd;
 }
 
@@ -49,7 +46,7 @@ void AcceptHandler::changeToNoBlock(const int& fd) {
 
 	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
 		close(fd);
-		throw std::runtime_error("AcceptHandler::changePropClientFd");
+		throw std::runtime_error("AcceptHandler::changeToNoBlock");
 	}
 }
 
@@ -61,7 +58,7 @@ bool AcceptHandler::acceptHandler(const int& socketFd) {
 	IEventHandler*		event = NULL;
 
 	try {
-		fd = acceptConnection(socketFd, addr);
+		if ((fd = acceptConnection(socketFd, addr)) < 0) return false;
 		port = ntohs(addr.sin_port);
 		ip = networkToPresentation(fd, addr);
 		changeToNoBlock(fd);
@@ -78,7 +75,12 @@ bool AcceptHandler::acceptHandler(const int& socketFd) {
 	return true;
 }
 
-void AcceptHandler::event(epoll_event&) {	
+void AcceptHandler::event(epoll_event& event) {
+	if (event.events & (EPOLLERR | EPOLLHUP)) {
+		std::cerr << "error on server socket[" << _fd << "]" << std::endl;
+		return ;
+	}
+
 	while (acceptHandler(_fd)) ;
 }
 
